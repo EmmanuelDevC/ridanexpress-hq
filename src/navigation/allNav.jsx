@@ -61,6 +61,10 @@ export const allNav = [
         role: 'admin',
         path: '/admin/dashboard/chat-sellers'
     },
+
+//   --------------------------------------------------------------------------------------------------
+// SELLERS
+
     {
         id: 9,
         title: 'Dashboard',
@@ -100,6 +104,13 @@ export const allNav = [
     {
         id: 13,
         title: 'Orders',
+        icon: <AiOutlineShoppingCart />,
+        role: 'seller',
+        path: '/seller/dashboard/orders'
+    },
+    {
+        id: 13,
+        title: 'Premium Subscription',
         icon: <AiOutlineShoppingCart />,
         role: 'seller',
         path: '/seller/dashboard/orders'

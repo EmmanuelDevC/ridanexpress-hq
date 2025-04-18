@@ -38,12 +38,12 @@ const OrderDetails = () => {
             <div className='w-full p-4  bg-[#283046] rounded-md'>
                 <div className='flex justify-between items-center p-4'>
                     <h2 className='text-xl text-[#d0d2d6]'>Order Details</h2>
-                    <select onChange={status_update} value={status} name="" id="" className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]'>
-                        <option value="pending">pending</option>
-                        <option value="processing">processing</option>
-                        <option value="warehouse">warehouse</option>
-                        <option value="placed">placed</option>
-                        <option value="cancelled">cancelled</option>
+                    <select value={status} onChange={status_update}>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
                     </select>
                 </div>
                 <div className='p-4'>
