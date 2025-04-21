@@ -39,11 +39,11 @@ const OrderDetails = () => {
                 <div className='flex justify-between items-center p-4'>
                     <h2 className='text-xl text-[#d0d2d6]'>Order Details</h2>
                     <select value={status} onChange={status_update}>
-                        <option value="pending">Pending</option>
-                        <option value="processing">Processing</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="pending">pending</option>
+                        <option value="processing">processing</option>
+                        <option value="warehouse">warehouse</option>
+                        <option value="placed">placed</option>
+                        <option value="cancelled">cancelled</option>
                     </select>
                 </div>
                 <div className='p-4'>
