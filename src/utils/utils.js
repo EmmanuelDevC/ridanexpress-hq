@@ -17,11 +17,11 @@ let app_url, api_url
 
 if (mode === production) {
     // app_url = "https://ridan-express-dashboard.vercel.app"
-    app_url = 'http://localhost:3001'
-    api_url = "http://localhost:5000"
+    app_url = 'https://martafrik-sellers.vercel.app'
+    api_url = "https://martafrik-api.onrender.com"
 } else {
-    app_url = 'http://localhost:3001'
-    api_url = "http://localhost:5000"
+    app_url = 'https://martafrik-sellers.vercel.app'
+    api_url = "https://martafrik-api.onrender.com"
 }
 
 const socket = io(api_url)
