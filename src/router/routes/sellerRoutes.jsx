@@ -1,4 +1,5 @@
 import { lazy } from 'react'
+import Premium from '../../views/seller/Premium'
 const AddBanner = lazy(() => import("../../views/seller/AddBanner"))
 const Banners = lazy(() => import("../../views/seller/Banners"))
 const SellerDashboard = lazy(() => import("../../views/seller/SellerDashboard"))
@@ -62,6 +63,12 @@ export const sellerRoutes = [
     {
         path: '/seller/dashboard/orders',
         element: <Orders />,
+        role: 'seller',
+        visibility: ['active', 'deactive']
+    },
+    {
+        path: '/seller/dashboard/premium-subscription',
+        element: <Premium />,
         role: 'seller',
         visibility: ['active', 'deactive']
     },

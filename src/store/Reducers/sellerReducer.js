@@ -94,45 +94,31 @@ export const get_deactive_sellers = createAsyncThunk(
     }
 )
 
-export const create_stripe_connect_account = createAsyncThunk(
-    'seller/create_stripe_connect_account',
-    async (_, { getState }) => {
-        const token = getState().auth.token
+export const create_flutterwave_subaccount = createAsyncThunk(
+    'seller/create_flutterwave_subaccount',
+    async (bankDetails, { rejectWithValue, fulfillWithValue, getState }) => {
+        const token = getState().auth.token;
         const config = {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
-        }
+        };
+
         try {
-            const { data: { url } } = await axios.get(`${api_url}/api/payment/create-stripe-connect-account`, config)
-            window.location.href = url
-            // return fulfillWithValue(data)
+            const { data } = await axios.post(
+                `${api_url}/api/create-flutterwave-subaccount`,
+                bankDetails,
+                config
+            );
+            return fulfillWithValue(data);
         } catch (error) {
-            //return rejectWithValue(error.response.data)
+            return rejectWithValue(
+                error.response?.data || { message: 'Activation failed' }
+            );
         }
     }
-)
-
-export const active_stripe_connect_account = createAsyncThunk(
-    'seller/active_stripe_connect_account',
-    async (activeCode, { rejectWithValue, fulfillWithValue, getState }) => {
-        const token = getState().auth.token
-        const config = {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        }
-        try {
-            const { data } = await axios.put(`${api_url}/api/payment/active-stripe-connect-account/${activeCode}`, {}, config)
-            return fulfillWithValue(data)
-        } catch (error) {
-            return rejectWithValue(error.response.data)
-        }
-    }
-)
-
-
-
+);
 
 
 export const sellerReducer = createSlice({
@@ -167,17 +153,18 @@ export const sellerReducer = createSlice({
             state.sellers = payload.sellers
             state.totalSeller = payload.totalSeller
         },
-        [active_stripe_connect_account.pending]: (state, { payload }) => {
-            state.loader = true
+        [create_flutterwave_subaccount.pending]: (state) => {
+            state.loader = true;
         },
-        [active_stripe_connect_account.rejected]: (state, { payload }) => {
-            state.loader = false
-            state.errorMessage = payload.message
+        [create_flutterwave_subaccount.rejected]: (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload?.message || 'Activation failed';
         },
-        [active_stripe_connect_account.fulfilled]: (state, { payload }) => {
-            state.loader = false
-            state.successMessage = payload.message
+        [create_flutterwave_subaccount.fulfilled]: (state, { payload }) => {
+            state.loader = false;
+            state.successMessage = payload.message;
         },
+
     }
 
 })

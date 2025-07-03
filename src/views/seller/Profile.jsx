@@ -1,182 +1,916 @@
-import React, { useEffect, useState } from 'react'
-import { BsImages } from 'react-icons/bs'
-import { FaEdit } from 'react-icons/fa'
-import { PropagateLoader } from 'react-spinners'
-import { FadeLoader } from 'react-spinners'
-import toast from 'react-hot-toast'
-import { useSelector, useDispatch } from 'react-redux'
-import { overrideStyle } from '../../utils/utils'
-import { profile_image_upload, messageClear, profile_info_add } from '../../store/Reducers/authReducer'
-import { create_stripe_connect_account } from '../../store/Reducers/sellerReducer'
+import React, { useEffect, useState, useRef } from 'react';
+import { 
+  BsImages, BsPatchCheckFill, BsCloudUpload, BsShieldCheck, 
+  BsGlobe, BsBuilding, BsHouse, BsFileText, BsCreditCard,
+  BsExclamationTriangle, BsCheckCircle, BsClock, BsShieldLock
+} from 'react-icons/bs';
+import { PropagateLoader } from 'react-spinners';
+import { FadeLoader } from 'react-spinners';
+import toast from 'react-hot-toast';
+import { useSelector, useDispatch } from 'react-redux';
+import { overrideStyle } from '../../utils/utils';
+import { 
+  profile_image_upload, 
+  messageClear, 
+  profile_info_add 
+} from '../../store/Reducers/authReducer';
+import { create_flutterwave_subaccount } from '../../store/Reducers/sellerReducer';
+
 const Profile = () => {
-    const [state, setState] = useState({
-        division: '',
-        district: '',
-        shopName: '',
-        sub_district: ''
-    })
-    const dispatch = useDispatch()
-    const { userInfo, loader, successMessage } = useSelector(state => state.auth)
+  const [state, setState] = useState({
+    division: '',
+    district: '',
+    shopName: '',
+    sub_district: '',
+    businessType: 'small',
+    cacNumber: '',
+    tin: '',
+    postalCode: '',
+    documentType: '',
+    id_number: '',
+    documentFile: null,
+    documentPreview: null
+  });
+  
+  const dispatch = useDispatch();
+  const { userInfo, loader, successMessage, errorMessage } = useSelector(state => state.auth);
+  const sellerReducer = useSelector(state => state.seller);
+  const [activeTab, setActiveTab] = useState('small');
+  const [scrollToBusinessInfo, setScrollToBusinessInfo] = useState(false);
+  const [tabMessage, setTabMessage] = useState('');
+  const [showBankForm, setShowBankForm] = useState(false);
+  const [bankDetails, setBankDetails] = useState({
+    account_number: '',
+    bank_code: ''
+  });
+  const businessInfoRef = useRef(null);
 
-    const add_image = (e) => {
-        if (e.target.files.length > 0) {
-            const formData = new FormData()
-            formData.append('image', e.target.files[0])
-            dispatch(profile_image_upload(formData))
-        }
+  useEffect(() => {
+    if (userInfo?.shopInfo) {
+      setState({
+        division: userInfo.shopInfo.division || '',
+        district: userInfo.shopInfo.district || '',
+        shopName: userInfo.shopInfo.shopName || '',
+        sub_district: userInfo.shopInfo.sub_district || '',
+        businessType: userInfo.shopInfo.businessType || 'small',
+        cacNumber: userInfo.shopInfo.cacNumber || '',
+        tin: userInfo.shopInfo.tin || '',
+        postalCode: userInfo.shopInfo.postalCode || '',
+        documentType: userInfo.shopInfo.documentType || '',
+        id_number: userInfo.shopInfo.id_number || '',
+        documentFile: null,
+        documentPreview: userInfo.shopInfo.document || null
+      });
+      setActiveTab(userInfo.shopInfo.businessType || 'small');
     }
-    useEffect(() => {
-        if (successMessage) {
-            toast.success(successMessage)
-            messageClear()
-        }
-    }, [successMessage])
+  }, [userInfo]);
 
-
-    const add = (e) => {
-        e.preventDefault()
-        dispatch(profile_info_add(state))
+  useEffect(() => {
+    if (scrollToBusinessInfo && businessInfoRef.current) {
+      businessInfoRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+      setScrollToBusinessInfo(false);
     }
+  }, [scrollToBusinessInfo]);
 
-    const inputHandle = (e) => {
-        setState({
-            ...state,
-            [e.target.name]: e.target.value
-        })
+  useEffect(() => {
+    let message = '';
+    switch(activeTab) {
+      case 'small':
+        message = 'Personal Business tab selected';
+        break;
+      case 'registered':
+        message = 'Licensed Enterprise tab selected';
+        break;
+      default:
+        break;
     }
+    
+    if (message) {
+      setTabMessage(message);
+      const timer = setTimeout(() => setTabMessage(''), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab]);
+
+  const add_image = (e) => {
+    if (e.target.files.length > 0) {
+      const formData = new FormData();
+      formData.append('image', e.target.files[0]);
+      dispatch(profile_image_upload(formData));
+    }
+  };
+  
+  const handleDocumentUpload = (e) => {
+    if (e.target.files.length > 0) {
+      const file = e.target.files[0];
+      
+      // Client-side validation
+      const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      
+      if (!validTypes.includes(file.type)) {
+        toast.error('Only JPG, PNG, or PDF files allowed');
+        return;
+      }
+      
+      if (file.size > maxSize) {
+        toast.error('File size exceeds 5MB limit');
+        return;
+      }
+      
+      const previewUrl = URL.createObjectURL(file);
+      
+      setState({
+        ...state,
+        documentFile: file,
+        documentPreview: previewUrl
+      });
+    }
+  };
+  
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage);
+      dispatch(messageClear());
+    }
+    if (errorMessage) {
+      toast.error(errorMessage);
+      dispatch(messageClear());
+    }
+    
+    if (sellerReducer.successMessage) {
+      toast.success(sellerReducer.successMessage);
+      dispatch(messageClear());
+    }
+    if (sellerReducer.errorMessage) {
+      toast.error(sellerReducer.errorMessage);
+      dispatch(messageClear());
+    }
+  }, [successMessage, errorMessage, sellerReducer, dispatch]);
+
+  const submit = (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    
+    formData.append('shopName', state.shopName);
+    formData.append('division', state.division);
+    formData.append('district', state.district);
+    formData.append('sub_district', state.sub_district);
+    formData.append('businessType', state.businessType);
+    formData.append('cacNumber', state.cacNumber || '');
+    formData.append('tin', state.tin || '');
+    formData.append('postalCode', state.postalCode);
+    formData.append('documentType', state.documentType);
+    formData.append('id_number', state.id_number);
+    
+    if (state.documentFile) {
+      formData.append('document', state.documentFile);
+    }
+    
+    dispatch(profile_info_add(formData));
+  };
+
+  const inputHandle = (e) => {
+    const { name, value } = e.target;
+    setState({
+      ...state,
+      [name]: value
+    });
+  };
+  
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setState(prev => ({
+      ...prev,
+      businessType: tab
+    }));
+  };
+
+  const handleUpgrade = () => {
+    setActiveTab('registered');
+    setScrollToBusinessInfo(true);
+  };
+
+  const getBusinessBadge = () => {
+    if (!userInfo?.shopInfo?.businessType) return null;
+    
+    if (userInfo.shopInfo.businessType === 'registered') {
+      return {
+        color: 'bg-gradient-to-r from-indigo-600 to-purple-600',
+        text: 'Verified vendor',
+        icon: <BsPatchCheckFill className="mr-1" />
+      };
+    }
+    return null;
+  };
+  
+  const VerificationBadge = ({ status }) => {
+    const statusConfig = {
+      pending: { 
+        color: 'bg-gradient-to-r from-yellow-600 to-orange-500',
+        text: 'Verification Pending', 
+        icon: <BsClock className="mr-1" />,
+        description: 'Your document is being verified. This usually takes 1-2 business days.'
+      },
+      verified: { 
+        color: 'bg-gradient-to-r from-green-500 to-emerald-600',
+        text: 'Verified ID', 
+        icon: <BsCheckCircle className="mr-1" />,
+        description: 'Identity successfully verified with Dojah'
+      },
+      manual_review: { 
+        color: 'bg-gradient-to-r from-orange-500 to-amber-600',
+        text: 'Manual Review Needed', 
+        icon: <BsExclamationTriangle className="mr-1" />,
+        description: 'Our team is reviewing your document. We\'ll notify you when complete.'
+      },
+      failed: { 
+        color: 'bg-gradient-to-r from-red-600 to-rose-700',
+        text: 'Verification Failed', 
+        icon: <BsExclamationTriangle className="mr-1" />,
+        description: 'We couldn\'t verify your document. Please upload a clear, valid ID.'
+      },
+      error: { 
+        color: 'bg-gradient-to-r from-purple-600 to-indigo-700',
+        text: 'Verification Error', 
+        icon: <BsExclamationTriangle className="mr-1" />,
+        description: 'Temporary verification issue. Please try again later.'
+      }
+    };
+    
+    const config = statusConfig[status] || statusConfig.pending;
+    
     return (
-        <div className='px-2 lg:px-7 py-5'>
-            <div className='w-full flex flex-wrap'>
-                <div className='w-full md:w-6/12'>
-                    <div className='w-full p-4  bg-[#283046] rounded-md text-[#d0d2d6]'>
-                        <div className='flex justify-center items-center py-3'>
-                            {
-                                userInfo?.image ? <label htmlFor="img" className='h-[210px] w-[300px] relative p-3 cursor-pointer overflow-hidden'>
-                                    <img className='w-full h-full' src={userInfo.image} alt="" />
-                                    {
-                                        loader && <div className='bg-slate-600 absolute left-0 top-0 w-full h-full opacity-70 flex justify-center items-center z-20'>
-                                            <span>
-                                                <FadeLoader />
-                                            </span>
-                                        </div>
-                                    }
-                                </label> : <label className='flex justify-center items-center flex-col h-[210px] w-[300px] cursor-pointer border border-dashed hover:border-indigo-500 border-[#d0d2d6] relative' htmlFor="img">
-                                    <span><BsImages /></span>
-                                    <span>Select Image</span>
-                                    {
-                                        loader && <div className='bg-slate-600 absolute left-0 top-0 w-full h-full opacity-70 flex justify-center items-center z-20'>
-                                            <span>
-                                                <FadeLoader />
-                                            </span>
-                                        </div>
-                                    }
-                                </label>
-                            }
-                            <input onChange={add_image} type="file" className='hidden' id='img' />
-                        </div>
-                        <div className='px-0 md:px-5 py-2'>
-                            <div className='flex justify-between text-sm flex-col gap-2 p-4 bg-slate-800 rounded-md relative'>
-                                <span className='p-[6px] bg-yellow-500 rounded hover:shadow-lg hover:shadow-yellow-500/50 absolute right-2 top-2 cursor-pointer'><FaEdit /></span>
-                                <div className='flex gap-2'>
-                                    <span>Name : </span>
-                                    <span>{userInfo.name}</span>
-                                </div>
-                                <div className='flex gap-2'>
-                                    <span>Email : </span>
-                                    <span>{userInfo.email}</span>
-                                </div>
-                                <div className='flex gap-2'>
-                                    <span>Role : </span>
-                                    <span>{userInfo.role}</span>
-                                </div>
-                                <div className='flex gap-2'>
-                                    <span>Status : </span>
-                                    <span>{userInfo.status}</span>
-                                </div>
-                                <div className='flex gap-2'>
-                                    <span>Payment Account : </span>
-                                    <p>
-                                        {
-                                            userInfo.payment === 'active' ? <span className='bg-red-500 text-white text-xs cursor-pointer font-normal ml-2 px-2 py-0.5 rounded '>{userInfo.payment}</span> : <span onClick={() => dispatch(create_stripe_connect_account())} className='bg-blue-500 text-white text-xs cursor-pointer font-normal ml-2 px-2 py-0.5 rounded '>
-                                                click active
-                                            </span>
-                                        }
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='px-0 md:px-5 py-2'>
-                            {
-                                !userInfo?.shopInfo ? <form onSubmit={add}>
-                                    <div className='flex flex-col w-full gap-1 mb-3'>
-                                        <label htmlFor="Shop">Shop Name</label>
-                                        <input value={state.shopName} onChange={inputHandle} className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' type="text" placeholder='shop name' name='shopName' id='Shop' required />
-                                    </div>
-                                    <div className='flex flex-col w-full gap-1' >
-                                        <label htmlFor="div">Division</label>
-                                        <input value={state.division} required onChange={inputHandle} className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' type="text" placeholder='division' name='division' id='div' />
-                                    </div>
-                                    <div className='flex flex-col w-full gap-1 mb-3'>
-                                        <label htmlFor="district">District</label>
-                                        <input value={state.district} required onChange={inputHandle} className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' type="text" placeholder='district' name='district' id='district' />
-                                    </div>
-                                    <div className='flex flex-col w-full gap-1 mb-3'>
-                                        <label htmlFor="sub">Sub District</label>
-                                        <input required value={state.sub_district} onChange={inputHandle} className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' type="text" placeholder='sub district' name='sub_district' id='sub' />
-                                    </div>
-                                    <button disabled={loader ? true : false} className='bg-blue-500 w-[190px] hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3'>
-                                        {
-                                            loader ? <PropagateLoader color='#fff' cssOverride={overrideStyle} /> : 'Update Info'
-                                        }
-                                    </button>
-                                </form> : <div className='flex justify-between text-sm flex-col gap-2 p-4 bg-slate-800 rounded-md relative'>
-                                    <span className='p-[6px] bg-yellow-500 rounded hover:shadow-lg hover:shadow-yellow-500/50 absolute right-2 top-2 cursor-pointer'><FaEdit /></span>
-                                    <div className='flex gap-2'>
-                                        <span>Shop Name : </span>
-                                        <span>{userInfo.shopInfo?.shopName}</span>
-                                    </div>
-                                    <div className='flex gap-2'>
-                                        <span>Division : </span>
-                                        <span>{userInfo.shopInfo?.division}</span>
-                                    </div>
-                                    <div className='flex gap-2'>
-                                        <span>District : </span>
-                                        <span>{userInfo.shopInfo?.district}</span>
-                                    </div>
-                                    <div className='flex gap-2'>
-                                        <span>Sub District : </span>
-                                        <span>{userInfo.shopInfo?.sub_district}</span>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-                <div className='w-full md:w-6/12'>
-                    <div className='w-full pl-0 md:pl-7 mt-6 md:mt-0  '>
-                        <div className='bg-[#283046] rounded-md text-[#d0d2d6] p-4'>
-                            <h1 className='text-[#d0d2d6] text-lg mb-3 font-semibold'>Change Password</h1>
-                            <form>
-                                <div className='flex flex-col w-full gap-1 mb-3'>
-                                    <label htmlFor="email">Email</label>
-                                    <input className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' type="email" placeholder='email' name='email' id='email' />
-                                </div>
-                                <div className='flex flex-col w-full gap-1'>
-                                    <label htmlFor="o_password">Old Password</label>
-                                    <input className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' type="password" placeholder='old password' name='old_password' id='o_password' />
-                                </div>
-                                <div className='flex flex-col w-full gap-1'>
-                                    <label htmlFor="n_password">New Password</label>
-                                    <input className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' type="password" placeholder='new password' name='new_password' id='n_password' />
-                                </div>
-                                <button className='bg-blue-500 hover:shadow-blue-500/50 hover:shadow-lg text-white rounded-md px-7 py-2 mt-5 '>Submit</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
+      <div className="flex flex-col">
+        <span className={`${config.color} text-white px-3 py-1 rounded-full text-xs font-medium flex items-center self-start mb-2`}>
+          {config.icon}
+          {config.text}
+        </span>
+        <p className="text-gray-400 text-sm">{config.description}</p>
+      </div>
+    );
+  };
 
-export default Profile
+  const businessBadge = getBusinessBadge();
+
+  const activateFlutterwaveAccount = () => {
+    if (!userInfo?.shopInfo?.shopName) {
+      toast.error('Please set up your shop name first');
+      return;
+    }
+    setShowBankForm(true);
+  };
+
+  const submitBankDetails = (e) => {
+    e.preventDefault();
+    dispatch(create_flutterwave_subaccount({
+      account_number: bankDetails.account_number,
+      bank_code: bankDetails.bank_code
+    }));
+    setShowBankForm(false);
+  };
+
+  return (
+    <div className='px-4 py-8 bg-gradient-to-b from-slate-900 to-gray-900 min-h-screen'>
+      <div className='max-w-7xl mx-auto'>
+        {/* Production Security Badge */}
+        {process.env.NODE_ENV === 'production' && (
+          <div className="mb-6 p-3 bg-gradient-to-r from-emerald-900/30 to-green-900/20 border border-emerald-700 rounded-xl flex items-center">
+            <BsShieldLock className="text-emerald-400 text-xl mr-3" />
+            <div>
+              <p className="text-emerald-300 font-medium">Production Environment • Dojah Verification Active</p>
+              <p className="text-emerald-400 text-xs mt-1">
+                All documents are securely verified and encrypted
+              </p>
+            </div>
+          </div>
+        )}
+        
+        <div className='flex flex-col lg:flex-row gap-6'>
+          {/* Left Column - Profile Section */}
+          <div className='w-full lg:w-8/12'>
+            <div className='bg-gradient-to-b from-gray-800 to-gray-850 rounded-2xl p-6 shadow-xl border border-gray-700'>
+              <div className="flex justify-between items-start mb-6">
+                <h2 className='text-2xl font-bold text-white'>Business Profile</h2>
+                {businessBadge && (
+                  <span className={`${businessBadge.color} text-white px-3 py-1.5 rounded-full text-sm flex items-center`}>
+                    {businessBadge.icon}
+                    {businessBadge.text}
+                  </span>
+                )}
+              </div>
+              
+              {/* Business Type Tabs */}
+              <div className='mb-6 flex border-b border-gray-700'>
+                <button 
+                  onClick={() => handleTabChange('small')} 
+                  className={`px-5 py-3 text-sm font-medium transition-all duration-200 ${activeTab === 'small' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-400 hover:text-gray-300'}`}
+                >
+                  Personal Business
+                </button>
+                <button 
+                  onClick={() => handleTabChange('registered')} 
+                  className={`px-5 py-3 text-sm font-medium transition-all duration-200 ${activeTab === 'registered' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-400 hover:text-gray-300'}`}
+                >
+                  Licensed Enterprise
+                </button>
+              </div>
+              
+              {/* Tab Navigation Message */}
+              {tabMessage && (
+                <div className="mb-4 p-3 bg-gradient-to-r from-blue-900/30 to-indigo-900/30 border border-blue-700 rounded-xl text-blue-300 text-sm">
+                  {tabMessage}
+                </div>
+              )}
+              
+              {/* Upgrade Prompt for Small Business */}
+              {userInfo?.shopInfo?.businessType === 'small' && (
+                <div className="mb-6 bg-gradient-to-r from-orange-900/30 to-amber-900/20 border border-orange-700 rounded-xl p-4">
+                  <h3 className="text-orange-400 font-medium flex items-center">
+                    <BsPatchCheckFill className="mr-2" />
+                    Upgrade Your Business Account
+                  </h3>
+                  <p className="text-orange-200 text-sm mt-2">
+                    Register as a licensed enterprise to unlock premium features, 
+                    gain customer trust, and access exclusive seller tools.
+                  </p>
+                  <button 
+                    onClick={handleUpgrade}
+                    className="mt-3 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white text-sm px-4 py-2 rounded-lg transition-all shadow-lg shadow-orange-500/20"
+                  >
+                    Upgrade Now
+                  </button>
+                </div>
+              )}
+              
+              {/* Profile Image and Info */}
+              <div className='flex flex-col md:flex-row gap-6 mb-8'>
+                {/* Profile Image */}
+                <div className='w-full md:w-5/12'>
+                  <div className='flex justify-center'>
+                    {userInfo?.image ? (
+                      <label htmlFor="img" className='h-48 w-48 relative rounded-xl overflow-hidden cursor-pointer border-2 border-gray-700 hover:border-orange-500 transition-all shadow-lg'>
+                        <img className='w-full h-full object-cover' src={userInfo.image} alt="Profile" />
+                        {loader && (
+                          <div className='absolute inset-0 bg-gray-900/80 flex justify-center items-center'>
+                            <FadeLoader color="#f97316" />
+                          </div>
+                        )}
+                      </label>
+                    ) : (
+                      <label className='flex flex-col justify-center items-center h-48 w-48 cursor-pointer border-2 border-dashed border-gray-700 rounded-xl hover:border-orange-500 transition-colors relative bg-gray-800/50' htmlFor="img">
+                        <BsImages className='text-gray-500 text-4xl mb-2' />
+                        <span className='text-gray-400 text-sm'>Upload Image</span>
+                        {loader && (
+                          <div className='absolute inset-0 bg-gray-900/80 flex justify-center items-center'>
+                            <FadeLoader color="#f97316" />
+                          </div>
+                        )}
+                      </label>
+                    )}
+                    <input onChange={add_image} type="file" className='hidden' id='img' />
+                  </div>
+                </div>
+                
+                {/* User Info */}
+                <div className='w-full md:w-7/12'>
+                  <div className='p-5 bg-gradient-to-b from-gray-800/50 to-gray-800/30 rounded-xl border border-gray-700 shadow-inner'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
+                      <div>
+                        <p className='text-gray-400 text-sm mb-1'>Full Name</p>
+                        <p className='text-white font-medium'>{userInfo.name}</p>
+                      </div>
+                      <div>
+                        <p className='text-gray-400 text-sm mb-1'>Email Address</p>
+                        <p className='text-white font-medium'>{userInfo.email}</p>
+                      </div>
+                      <div>
+                        <p className='text-gray-400 text-sm mb-1'>Account Role</p>
+                        <p className='text-white font-medium'>{userInfo.role}</p>
+                      </div>
+                      <div>
+                        <p className='text-gray-400 text-sm mb-1'>Account Status</p>
+                        <p className='text-white font-medium'>{userInfo.status}</p>
+                      </div>
+                    </div>
+                    
+                    <div className='flex items-center justify-between pt-4 border-t border-gray-700'>
+                      <div>
+                        <p className='text-gray-400 text-sm mb-1'>Payment Account</p>
+                        <p>
+                          {userInfo.payment === 'active' ? (
+                            <span className='text-green-400 font-medium'>Active</span>
+                          ) : (
+                            <span 
+                              onClick={activateFlutterwaveAccount}
+                              className='text-orange-500 font-medium cursor-pointer hover:underline'
+                            >
+                              {sellerReducer.loader ? 'Activating...' : 'Activate Payment Account'}
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Business Info Section */}
+              <div ref={businessInfoRef} className="bg-gradient-to-b from-gray-800/30 to-gray-800/10 border border-gray-700 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-white mb-6 flex items-center">
+                  <BsBuilding className="mr-2 text-orange-500" />
+                  Business Information
+                </h3>
+                
+                <form onSubmit={submit} className='space-y-6'>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                    <div className="relative">
+                      <label htmlFor="Shop" className='block text-gray-400 text-sm mb-2'>Shop Name</label>
+                      <div className="relative">
+                        <BsHouse className="absolute left-3 top-3.5 text-gray-500" />
+                        <input 
+                          value={state.shopName} 
+                          onChange={inputHandle} 
+                          className='w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white' 
+                          type="text" 
+                          placeholder='Enter shop name' 
+                          name='shopName' 
+                          id='Shop' 
+                          required 
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="relative">
+                      <label htmlFor="div" className='block text-gray-400 text-sm mb-2'>Country</label>
+                      <div className="relative">
+                        <BsGlobe className="absolute left-3 top-3.5 text-gray-500" />
+                        <input 
+                          value={state.division} 
+                          onChange={inputHandle} 
+                          className='w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white' 
+                          type="text" 
+                          placeholder='Enter country' 
+                          name='division' 
+                          id='div' 
+                          required 
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="district" className='block text-gray-400 text-sm mb-2'>State/Province</label>
+                      <input 
+                        value={state.district} 
+                        onChange={inputHandle} 
+                        className='w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white' 
+                        type="text" 
+                        placeholder='Enter state/province' 
+                        name='district' 
+                        id='district' 
+                        required 
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="sub" className='block text-gray-400 text-sm mb-2'>Business Address</label>
+                      <input 
+                        value={state.sub_district} 
+                        onChange={inputHandle} 
+                        className='w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white' 
+                        type="text" 
+                        placeholder='Enter business address' 
+                        name='sub_district' 
+                        id='sub' 
+                        required 
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="postalCode" className='block text-gray-400 text-sm mb-2'>Postal Code</label>
+                      <input 
+                        value={state.postalCode} 
+                        onChange={inputHandle} 
+                        className='w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white' 
+                        type="text" 
+                        placeholder='Enter postal code' 
+                        name='postalCode' 
+                        id='postalCode' 
+                        required 
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="documentType" className='block text-gray-400 text-sm mb-2'>Identity Document</label>
+                      <select 
+                        value={state.documentType} 
+                        onChange={inputHandle} 
+                        className='w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white' 
+                        name='documentType' 
+                        id='documentType' 
+                        required
+                      >
+                        <option value="">Select Document Type</option>
+                        <option value="passport">Passport</option>
+                        <option value="national_id">National ID (NIN)</option>
+                        <option value="driver_license">Driver's License</option>
+                        <option value="voter_card">Voter's Card</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  {state.documentType && (
+                    <div>
+                      <label htmlFor="id_number" className='block text-gray-400 text-sm mb-2'>
+                        {state.documentType === 'national_id' ? 'National ID Number (NIN)' :
+                         state.documentType === 'passport' ? 'Passport Number' :
+                         'ID Number'}
+                      </label>
+                      <input 
+                        value={state.id_number} 
+                        onChange={inputHandle} 
+                        className='w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white' 
+                        type="text" 
+                        placeholder='Enter your ID number' 
+                        name='id_number' 
+                        id='id_number' 
+                        required 
+                      />
+                    </div>
+                  )}
+                  
+                  {state.documentType && (
+                    <div className="bg-gradient-to-b from-gray-800/30 to-gray-800/10 rounded-xl p-1">
+                      <h3 className="text-white font-medium mb-4 flex items-center">
+                        <BsFileText className="mr-2 text-orange-500" />
+                        Upload {state.documentType.replace('_', ' ')} Document
+                      </h3>
+                      
+                      <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-600 rounded-xl p-2 transition-colors hover:border-orange-500 bg-gray-800/20">
+                        {state.documentPreview ? (
+                          <div className="relative">
+                            <img 
+                              src={state.documentPreview} 
+                              alt="Document preview" 
+                              className="max-h-48 rounded-lg border border-gray-600"
+                            />
+                            <button 
+                              className="absolute -top-3 -right-3 bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setState({
+                                  ...state,
+                                  documentPreview: null,
+                                  documentFile: null
+                                });
+                              }}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                              </svg>
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <BsCloudUpload className="text-gray-500 text-4xl mb-3" />
+                            <p className="text-gray-400 text-sm mb-4">
+                              Upload your {state.documentType.replace('_', ' ')} document
+                            </p>
+                            <label 
+                              htmlFor="documentUpload"
+                              className="px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-800 rounded-lg text-white hover:from-gray-600 hover:to-gray-700 cursor-pointer transition-all"
+                            >
+                              Select File
+                            </label>
+                            <input 
+                              type="file" 
+                              id="documentUpload" 
+                              className="hidden"
+                              onChange={handleDocumentUpload}
+                              accept=".jpg,.jpeg,.png,.pdf"
+                            />
+                            <p className="text-gray-500 text-xs mt-3">
+                              Supported formats: JPG, PNG, PDF (max 5MB)
+                            </p>
+                          </>
+                        )}
+                      </div>
+                      
+                      {/* Document Requirements */}
+                      <div className="mt-4 bg-gray-800/30 rounded-lg p-4 border border-gray-600">
+                        <h4 className="text-white text-sm font-medium mb-2">Document Requirements:</h4>
+                        <ul className="text-gray-400 text-sm space-y-1">
+                          <li>• Must be government-issued ID</li>
+                          <li>• Clear photo of entire document</li>
+                          <li>• All corners visible</li>
+                          <li>• No glare or reflections</li>
+                          <li>• Valid expiration date (if applicable)</li>
+                        </ul>
+                        <p className="text-orange-400 text-xs mt-3">
+                          Documents are verified via Dojah and stored securely
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {state.documentType && userInfo?.shopInfo?.documentVerification && (
+                    <div className="bg-gradient-to-b from-gray-800/30 to-gray-800/10 rounded-xl p-5 border border-gray-600">
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="text-white font-medium flex items-center">
+                          <BsShieldCheck className="mr-2 text-blue-400" />
+                          Document Verification
+                        </h3>
+                        <VerificationBadge status={userInfo.shopInfo.documentVerification.status} />
+                      </div>
+                      
+                      {userInfo.shopInfo.documentVerification.checks.length > 0 && (
+                        <div className="mb-3">
+                          <p className="text-gray-400 text-sm mb-1">Security Checks:</p>
+                          <ul className="text-green-400 text-sm space-y-1">
+                            {userInfo.shopInfo.documentVerification.checks.map((check, i) => (
+                              <li key={i} className="flex items-center">
+                                <span className="mr-2">✓</span> {check}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {userInfo.shopInfo.documentVerification.issues.length > 0 && (
+                        <div>
+                          <p className="text-gray-400 text-sm mb-1">Issues Found:</p>
+                          <ul className="text-red-400 text-sm space-y-1">
+                            {userInfo.shopInfo.documentVerification.issues.map((issue, i) => (
+                              <li key={i} className="flex items-center">
+                                <span className="mr-2">⚠️</span> {issue}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {activeTab === 'registered' && (
+                    <div className='p-5 bg-gradient-to-b from-gray-800/30 to-gray-800/10 rounded-xl border border-gray-600'>
+                      <h3 className='text-white font-medium mb-4 pb-2 border-b border-gray-700'>
+                        Business Registration Details
+                      </h3>
+                      
+                      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                        <div>
+                          <label htmlFor="cacNumber" className='block text-gray-400 text-sm mb-2'>CAC Registration Number</label>
+                          <input 
+                            value={state.cacNumber} 
+                            onChange={inputHandle} 
+                            className='w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white' 
+                            type="text" 
+                            placeholder='Enter CAC number' 
+                            name='cacNumber' 
+                            id='cacNumber' 
+                            required 
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="tin" className='block text-gray-400 text-sm mb-2'>Tax ID (TIN)</label>
+                          <input 
+                            value={state.tin} 
+                            onChange={inputHandle} 
+                            className='w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white' 
+                            type="text" 
+                            placeholder='Enter tax ID number' 
+                            name='tin' 
+                            id='tin' 
+                            required 
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+            
+                  <button 
+                    disabled={loader} 
+                    className={`w-full bg-gradient-to-r from-orange-500 to-amber-600 text-white font-medium rounded-lg px-7 py-3.5 hover:from-orange-400 hover:to-amber-500 transition-all shadow-lg shadow-orange-500/30`}
+                  >
+                    {loader ? (
+                      <PropagateLoader color='#fff' cssOverride={overrideStyle} />
+                    ) : 'Save Business Information'}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          
+          {/* Right Column - Security */}
+          <div className='w-full lg:w-4/12'>
+            <div className='bg-gradient-to-b from-gray-800 to-gray-850 rounded-2xl p-6 shadow-xl border border-gray-700'>
+              <h2 className='text-xl font-bold text-white mb-6'>Security Settings</h2>
+              
+              <div className='mb-8'>
+                <h3 className='text-white font-medium mb-4 pb-2 border-b border-gray-700'>Change Password</h3>
+                <form className='space-y-4'>
+                  <div>
+                    <label htmlFor="email" className='block text-gray-400 text-sm mb-2'>Email Address</label>
+                    <input 
+                      className='w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white' 
+                      type="email" 
+                      placeholder='your@email.com' 
+                      name='email' 
+                      id='email' 
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="o_password" className='block text-gray-400 text-sm mb-2'>Current Password</label>
+                    <input 
+                      className='w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white' 
+                      type="password" 
+                      placeholder='••••••••' 
+                      name='old_password' 
+                      id='o_password' 
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="n_password" className='block text-gray-400 text-sm mb-2'>New Password</label>
+                    <input 
+                      className='w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white' 
+                      type="password" 
+                      placeholder='••••••••' 
+                      name='new_password' 
+                      id='n_password' 
+                    />
+                  </div>
+                  <button className='w-full bg-gradient-to-r from-gray-700 to-gray-800 text-white font-medium rounded-lg px-7 py-3.5 hover:from-gray-600 hover:to-gray-700 transition-all'>
+                    Update Password
+                  </button>
+                </form>
+              </div>
+              
+              <div>
+                <h3 className='text-white font-medium mb-4 pb-2 border-b border-gray-700'>Two-Factor Authentication</h3>
+                <div className='flex justify-between items-center'>
+                  <div>
+                    <p className='text-gray-400 text-sm'>Status: <span className='text-orange-500'>Disabled</span></p>
+                    <p className='text-gray-500 text-xs mt-1'>Add an extra layer of security</p>
+                  </div>
+                  <button className='px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-800 text-sm text-white rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all'>
+                    Enable
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            {/* Business Benefits Card */}
+            <div className="mt-6 bg-gradient-to-b from-gray-800 to-gray-850 rounded-2xl p-6 shadow-xl border border-gray-700">
+              <h2 className="text-xl font-bold text-white mb-4">Business Account Benefits</h2>
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <div className="bg-indigo-500/10 p-2 rounded-lg mr-3">
+                    <BsPatchCheckFill className="text-indigo-400 text-lg" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Payment Account Card */}
+            <div className="mt-6 bg-gradient-to-b from-gray-800 to-gray-850 rounded-2xl p-6 shadow-xl border border-gray-700">
+              <h2 className="text-xl font-bold text-white mb-4 flex items-center">
+                <BsCreditCard className="mr-2 text-orange-500" />
+                Payment Account
+              </h2>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-gray-400 text-sm">Account Status</p>
+                    <p className="text-white font-medium">
+                      {userInfo.payment === 'active' ? 'Active' : 'Not Activated'}
+                    </p>
+                  </div>
+                  <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    userInfo.payment === 'active' 
+                      ? 'bg-green-900/30 text-green-400 border border-green-700' 
+                      : 'bg-amber-900/30 text-amber-400 border border-amber-700'
+                  }`}>
+                    {userInfo.payment === 'active' ? 'Verified' : 'Pending'}
+                  </div>
+                </div>
+                
+                {userInfo.payment !== 'active' && (
+                  <button 
+                    onClick={activateFlutterwaveAccount}
+                    className="w-full mt-4 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-400 hover:to-amber-500 text-white font-medium rounded-lg py-2.5 transition-all shadow-lg shadow-orange-500/20"
+                  >
+                    Activate Payment Account
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Bank Details Modal */}
+      {showBankForm && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-b from-gray-800 to-gray-850 rounded-2xl p-6 w-full max-w-md border border-gray-700 shadow-2xl">
+            <h3 className="text-xl font-bold text-white mb-4">Add Bank Details</h3>
+            
+            {/* Test Mode Indicator */}
+            {process.env.NODE_ENV !== 'production' && (
+              <div className="mb-4 p-3 bg-gradient-to-r from-amber-900/30 to-yellow-900/20 border border-amber-700 rounded-xl">
+                <div className="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-400 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <div>
+                    <p className="text-amber-300 font-medium">Test Mode Activated</p>
+                    <p className="text-amber-400 text-xs mt-1">
+                      Use test account numbers: Access Bank - 0690000032, GTBank - 0233333334
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <form onSubmit={submitBankDetails} className="space-y-4">
+              <div>
+                <label className="block text-gray-400 mb-2">Account Number</label>
+                <input
+                  type="text"
+                  value={bankDetails.account_number}
+                  onChange={(e) => setBankDetails({...bankDetails, account_number: e.target.value})}
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none"
+                  placeholder="1234567890"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400 mb-2">Bank</label>
+                <select
+                  value={bankDetails.bank_code}
+                  onChange={(e) => setBankDetails({...bankDetails, bank_code: e.target.value})}
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none"
+                  required
+                >
+                  <option value="">Select Bank</option>
+                  <option value="044">Access Bank</option>
+                  <option value="058">Guaranty Trust Bank (GTB)</option>
+                  <option value="033">United Bank For Africa (UBA)</option>
+                  <option value="035">Wema Bank</option>
+                  <option value="057">Zenith Bank</option>
+                  <option value="050">Ecobank Nigeria</option>
+                  <option value="070">Fidelity Bank</option>
+                  <option value="011">First Bank of Nigeria</option>
+                  <option value="030">Heritage Bank</option>
+                  <option value="301">Jaiz Bank</option>
+                  <option value="082">Keystone Bank</option>
+                  <option value="076">Polaris Bank</option>
+                  <option value="101">Providus Bank</option>
+                  <option value="221">Stanbic IBTC Bank</option>
+                  <option value="068">Standard Chartered Bank</option>
+                  <option value="232">Sterling Bank</option>
+                  <option value="100">Suntrust Bank</option>
+                  <option value="032">Union Bank of Nigeria</option>
+                  <option value="215">Unity Bank</option>
+                </select>
+              </div>
+              <div className="flex justify-end space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowBankForm(false)}
+                  className="px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-800 text-white rounded-lg hover:from-gray-600 hover:to-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={sellerReducer.loader}
+                  className={`flex items-center px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-700 text-white rounded-lg hover:from-orange-500 hover:to-amber-600 transition-all ${
+                    sellerReducer.loader ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {sellerReducer.loader ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing...
+                    </>
+                  ) : (
+                    'Activate Account'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Profile;

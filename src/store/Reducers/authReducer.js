@@ -82,23 +82,22 @@ export const profile_image_upload = createAsyncThunk(
 
 export const profile_info_add = createAsyncThunk(
     'auth/profile_info_add',
-    async (info, { rejectWithValue, fulfillWithValue, getState }) => {
+    async (formData, { rejectWithValue, fulfillWithValue, getState }) => {
         const token = getState().auth.token
         const config = {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
             }
         }
         try {
-            const { data } = await axios.post(`${api_url}/api/profile-info-add`, info, config)
+            const { data } = await axios.post(`${api_url}/api/profile-info-add`, formData, config)
             return fulfillWithValue(data)
         } catch (error) {
             return rejectWithValue(error.response.data)
         }
     }
 )
-
-
 
 
 export const get_user_info = createAsyncThunk(
@@ -212,6 +211,10 @@ export const authReducer = createSlice({
             state.userInfo = payload.userInfo
             state.successMessage = payload.message
         },
+        [profile_info_add.rejected]: (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload?.error || 'Profile update failed';
+        }
     }
 
 })

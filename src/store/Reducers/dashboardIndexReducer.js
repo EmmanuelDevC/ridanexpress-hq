@@ -4,21 +4,31 @@ import { api_url } from '../../utils/utils'
 
 export const get_seller_dashboard_index_data = createAsyncThunk(
     'dashboardIndex/get_seller_dashboard_index_data',
-    async (_, { rejectWithValue, fulfillWithValue, getState }) => {
-        const token = getState().auth.token
+    async (sellerId, { rejectWithValue, fulfillWithValue, getState }) => {
+        const token = getState().auth.token;
         const config = {
             headers: {
                 'Authorization': `Bearer ${token}`
-            }
+            },
+            params: {}
+        };
+
+        // Only add forSeller param if sellerId is provided
+        if (sellerId) {
+            config.params.forSeller = sellerId;
         }
+
         try {
-            const { data } = await axios.get(`${api_url}/api/seller/get-dashboard-index-data`, config)
-            return fulfillWithValue(data)
+            const { data } = await axios.get(
+                `${api_url}/api/seller/get-dashboard-index-data`,
+                config
+            );
+            return fulfillWithValue(data);
         } catch (error) {
-            return rejectWithValue(error.response.data)
+            return rejectWithValue(error.response.data);
         }
     }
-)
+);
 
 export const get_admin_dashboard_index_data = createAsyncThunk(
     'dashboardIndex/get_admin_dashboard_index_data',

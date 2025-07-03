@@ -4,24 +4,47 @@ import { api_url } from '../../utils/utils'
 
 export const categoryAdd = createAsyncThunk(
     'category/categoryAdd',
-    async ({ name, image }, { rejectWithValue, fulfillWithValue, getState }) => {
+    async ({ name, image, subcategories, specificationGroups }, { rejectWithValue, fulfillWithValue, getState }) => {
         const token = getState().auth.token
         const config = {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
             }
         }
+
         try {
-            const formData = new FormData()
-            formData.append('name', name)
-            formData.append('image', image)
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('image', image);
+            formData.append('subcategories', JSON.stringify(subcategories));
+            formData.append('specificationGroups', JSON.stringify(specificationGroups));
+
             const { data } = await axios.post(`${api_url}/api/category-add`, formData, config)
             return fulfillWithValue(data)
         } catch (error) {
-            return rejectWithValue(error.response.data)
+            return rejectWithValue(error.response?.data || {
+                error: error.message || 'Category upload failed'
+            });
         }
     }
-)
+);
+
+export const delete_category = createAsyncThunk(
+    'category/delete_category',
+    async (categoryId, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await axios.delete(`${api_url}/api/category-delete/${categoryId}`,
+                { withCredentials: true }
+            );
+            return fulfillWithValue({ ...data, categoryId });
+        } catch (error) {
+            return rejectWithValue(error.response?.data || {
+                error: error.message || 'Failed to delete category'
+            });
+        }
+    }
+);
 
 export const get_category = createAsyncThunk(
     'category/get_category',
@@ -41,6 +64,28 @@ export const get_category = createAsyncThunk(
     }
 )
 
+// Update Category
+export const update_category = createAsyncThunk(
+    'category/update_category',
+    async ({ id, name, image, subcategories }, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('image', image);
+            formData.append('subcategories', JSON.stringify(subcategories));
+
+            const { data } = await axios.put(`${api_url}/api/category-update/${id}`, formData, {
+                withCredentials: true,
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response?.data || {
+                error: error.message || 'Category update failed'
+            });
+        }
+    }
+);
 
 
 export const categoryReducer = createSlice({

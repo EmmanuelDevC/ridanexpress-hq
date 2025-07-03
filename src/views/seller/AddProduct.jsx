@@ -1,39 +1,32 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import { BsImages } from 'react-icons/bs'
-import { IoCloseSharp } from 'react-icons/io5'
-import { useSelector, useDispatch } from 'react-redux'
-import toast from 'react-hot-toast'
-import { PropagateLoader } from 'react-spinners'
+import React, { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { BsImages, BsPlusLg, BsUpload } from 'react-icons/bs';
+import { IoCloseSharp } from 'react-icons/io5';
+import { useSelector, useDispatch } from 'react-redux';
+import toast from 'react-hot-toast';
+import { PropagateLoader } from 'react-spinners';
 import JoditEditor from 'jodit-react';
-import { overrideStyle } from '../../utils/utils'
-import { get_category } from '../../store/Reducers/categoryReducer'
-import { add_product, messageClear } from '../../store/Reducers/productReducer'
+import { overrideStyle } from '../../utils/utils';
+import { get_category } from '../../store/Reducers/categoryReducer';
+import { add_product, messageClear } from '../../store/Reducers/productReducer';
 
 const AddProduct = () => {
-
     const editor = useRef(null);
     const [content, setContent] = useState('');
 
-    // const config = useMemo(() => ({
-    //     readonly: false, // all options from https://xdsoft.net/jodit/docs/,
-    //     placeholder: placeholder || 'Start typings...'
-    // }),
-    //     [placeholder]
-    // );
-
-
-    const dispatch = useDispatch()
-    const { categorys } = useSelector(state => state.category)
-    const { successMessage, errorMessage, loader } = useSelector(state => state.product)
-    const { userInfo } = useSelector(state => state.auth)
+    const dispatch = useDispatch();
+    const { categorys } = useSelector(state => state.category);
+    const { successMessage, errorMessage, loader } = useSelector(state => state.product);
+    const { userInfo } = useSelector(state => state.auth);
+    
     useEffect(() => {
         dispatch(get_category({
             searchValue: '',
             parPage: '',
             page: ""
-        }))
-    }, [])
+        }));
+    }, []);
+    
     const [state, setState] = useState({
         name: "",
         description: '',
@@ -41,92 +34,151 @@ const AddProduct = () => {
         price: "",
         brand: "",
         stock: ""
-    })
+    });
+    
     const inputHandle = (e) => {
         setState({
             ...state,
             [e.target.name]: e.target.value
-        })
-    }
+        });
+    };
 
-    const [cateShow, setCateShow] = useState(false)
-    const [category, setCategory] = useState('')
-    const [allCategory, setAllCategory] = useState([])
-    const [searchValue, setSearchValue] = useState('')
+    const [cateShow, setCateShow] = useState(false);
+    const [category, setCategory] = useState('');
+    const [subcategory, setSubcategory] = useState('');
+    const [allCategory, setAllCategory] = useState([]);
+    const [searchValue, setSearchValue] = useState('');
+    const [hoveredCategory, setHoveredCategory] = useState(null);
+    
     const categorySearch = (e) => {
-        const value = e.target.value
-        setSearchValue(value)
+        const value = e.target.value;
+        setSearchValue(value);
         if (value) {
-            let srcValue = allCategory.filter(c => c.name.toLowerCase().indexOf(value.toLowerCase()) > -1)
-            setAllCategory(srcValue)
+            let srcValue = categorys.filter(c => c.name.toLowerCase().indexOf(value.toLowerCase()) > -1);
+            setAllCategory(srcValue);
         } else {
-            setAllCategory(categorys)
+            setAllCategory(categorys);
         }
-    }
-    const [images, setImages] = useState([])
-    const [imageShow, setImageShow] = useState([])
-    const inmageHandle = (e) => {
-        const files = e.target.files
+    };
+    
+    // Specifications state
+    const [specifications, setSpecifications] = useState({});
+    const [categorySpecs, setCategorySpecs] = useState([]);
+    
+    useEffect(() => {
+        if (category) {
+            const selectedCategory = categorys.find(c => c.name === category);
+            if (selectedCategory && selectedCategory.specificationGroups) {
+                // Flatten all specification fields from all groups
+                const allSpecs = [];
+                selectedCategory.specificationGroups.forEach(group => {
+                    group.fields.forEach(field => {
+                        allSpecs.push(field.name);
+                    });
+                });
+                setCategorySpecs(allSpecs);
+                
+                // Initialize specifications object with empty values
+                const initialSpecs = {};
+                allSpecs.forEach(spec => {
+                    initialSpecs[spec] = '';
+                });
+                setSpecifications(initialSpecs);
+            }
+        }
+    }, [category, categorys]);
+    
+    const handleSpecChange = (spec, value) => {
+        setSpecifications({
+            ...specifications,
+            [spec]: value
+        });
+    };
+    
+    const [images, setImages] = useState([]);
+    const [imageShow, setImageShow] = useState([]);
+    
+    const imageHandle = (e) => {
+        const files = e.target.files;
         const length = files.length;
 
         if (length > 0) {
-            setImages([...images, ...files])
-            let imageUrl = []
+            if (images.length + length > 8) {
+                toast.error('Maximum 8 images allowed');
+                return;
+            }
+            
+            setImages([...images, ...files]);
+            let imageUrl = [];
 
             for (let i = 0; i < length; i++) {
-                imageUrl.push({ url: URL.createObjectURL(files[i]) })
+                imageUrl.push({ url: URL.createObjectURL(files[i]) });
             }
-            setImageShow([...imageShow, ...imageUrl])
+            setImageShow([...imageShow, ...imageUrl]);
         }
-    }
+    };
 
     const changeImage = (img, index) => {
         if (img) {
-            let tempUrl = imageShow
-            let tempImages = images
+            let tempUrl = [...imageShow];
+            let tempImages = [...images];
 
-            tempImages[index] = img
-            tempUrl[index] = { url: URL.createObjectURL(img) }
-            setImageShow([...tempUrl])
-            setImages([...tempImages])
+            tempImages[index] = img;
+            tempUrl[index] = { url: URL.createObjectURL(img) };
+            setImageShow(tempUrl);
+            setImages(tempImages);
         }
-    }
+    };
 
     const removeImage = (i) => {
-        const filterImage = images.filter((img, index) => index !== i)
-        const filterImageUrl = imageShow.filter((img, index) => index !== i)
-        setImages(filterImage)
-        setImageShow(filterImageUrl)
-    }
+        const filterImage = images.filter((img, index) => index !== i);
+        const filterImageUrl = imageShow.filter((img, index) => index !== i);
+        setImages(filterImage);
+        setImageShow(filterImageUrl);
+    };
 
     useEffect(() => {
-        setAllCategory(categorys)
-    }, [categorys])
+        setAllCategory(categorys);
+    }, [categorys]);
 
     const add = (e) => {
-        e.preventDefault()
-        const formData = new FormData()
-        formData.append('name', state.name)
-        formData.append('description', content)
-        formData.append('price', state.price)
-        formData.append('stock', state.stock)
-        formData.append('category', category)
-        formData.append('discount', state.discount)
-        formData.append('shopName', userInfo?.shopInfo?.shopName)
-        formData.append('brand', state.brand)
-        for (let i = 0; i < images.length; i++) {
-            formData.append('images', images[i])
+        e.preventDefault();
+        if (!category) {
+            toast.error('Please select a category');
+            return;
         }
-        dispatch(add_product(formData))
-    }
+        if (images.length === 0) {
+            toast.error('Please add at least one image');
+            return;
+        }
+        
+        const formData = new FormData();
+        formData.append('name', state.name);
+        formData.append('description', content);
+        formData.append('price', state.price);
+        formData.append('stock', state.stock);
+        formData.append('category', category);
+        formData.append('subcategory', subcategory);
+        formData.append('discount', state.discount);
+        formData.append('shopName', userInfo?.shopInfo?.shopName);
+        formData.append('brand', state.brand);
+        formData.append('specifications', JSON.stringify(specifications));
+        
+        for (let i = 0; i < images.length; i++) {
+            formData.append('images', images[i]);
+        }
+        
+        dispatch(add_product(formData));
+    };
+    
     useEffect(() => {
         if (errorMessage) {
-            toast.error(errorMessage)
-            dispatch(messageClear())
+            toast.error(errorMessage);
+            dispatch(messageClear());
         }
         if (successMessage) {
-            toast.success(successMessage)
-            dispatch(messageClear())
+            toast.success(successMessage);
+            dispatch(messageClear());
             setState({
                 name: "",
                 description: '',
@@ -134,111 +186,409 @@ const AddProduct = () => {
                 price: "",
                 brand: "",
                 stock: ""
-            })
-            setImageShow([])
-            setImages([])
-            setCategory('')
-
+            });
+            setContent('');
+            setImageShow([]);
+            setImages([]);
+            setCategory('');
+            setSubcategory('');
+            setSpecifications({});
+            setCategorySpecs([]);
         }
-    }, [successMessage, errorMessage])
+    }, [successMessage, errorMessage]);
 
     return (
-        <div className='px-2 lg:px-7 pt-5 '>
-            <div className='w-full p-4  bg-[#283046] rounded-md'>
-                <div className='flex justify-between items-center pb-4'>
-                    <h1 className='text-[#d0d2d6] text-xl font-semibold'>Add Product</h1>
-                    <Link className='bg-blue-500 hover:shadow-blue-500/50 hover:shadow-lg text-white rounded-sm px-7 py-2 my-2 ' to='/seller/dashboard/products'>Products</Link>
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-slate-900 py-8 px-2 sm:px-4">
+            <div className="max-w-7xl mx-auto">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                    <div>
+                        <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-blue-500 mb-2">
+                            Create New Product
+                        </h1>
+                        <p className="text-indigo-300 text-sm">
+                            Add a new product listing to your store
+                        </p>
+                    </div>
+                    <Link 
+                        to="/seller/dashboard/products" 
+                        className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 transition-all px-5 py-3 rounded-xl text-white shadow-lg hover:shadow-indigo-500/30"
+                    >
+                        View All Products
+                    </Link>
                 </div>
-                <div>
-                    <form onSubmit={add}>
-                        <div className='flex flex-col mb-3 md:flex-row gap-4 w-full text-[#d0d2d6]'>
-                            <div className='flex flex-col w-full gap-1'>
-                                <label htmlFor="name">Product name</label>
-                                <input className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' onChange={inputHandle} value={state.name} type="text" placeholder='product name' name='name' id='name' />
+                
+                <div className="bg-gradient-to-br from-gray-800/50 to-slate-800/50 rounded-2xl border border-slate-700 shadow-xl overflow-hidden">
+                    <div className="p-5 md:p-6 border-b border-slate-700">
+                        <h2 className="text-xl font-semibold text-white flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-600 to-blue-600 flex items-center justify-center">
+                                <BsPlusLg className="text-white" />
                             </div>
-                            <div className='flex flex-col w-full gap-1'>
-                                <label htmlFor="brand">Product brand</label>
-                                <input className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' onChange={inputHandle} value={state.brand} type="text" placeholder='product brand' name='brand' id='brand' />
-                            </div>
-                        </div>
-                        <div className='flex flex-col mb-3 md:flex-row gap-4 w-full text-[#d0d2d6]'>
-                            <div className='flex flex-col w-full gap-1 relative'>
-                                <label htmlFor="category">Category</label>
-                                <input readOnly onClick={() => setCateShow(!cateShow)} className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' onChange={inputHandle} value={category} type="text" placeholder='--select category--' id='category' />
-                                <div className={`absolute top-[101%] bg-slate-800 w-full transition-all ${cateShow ? 'scale-100' : 'scale-0'}`}>
-                                    <div className='w-full px-4 py-2 fixed'>
-                                        <input value={searchValue} onChange={categorySearch} className='px-3 py-1 w-full focus:border-indigo-500 outline-none bg-transparent border border-slate-700 rounded-md text-[#d0d2d6] overflow-hidden' type="text" placeholder='search' />
-                                    </div>
-                                    <div className='pt-14'></div>
-                                    <div className='flex justify-start items-start flex-col h-[200px] overflow-x-scroll'>
-                                        {
-                                            allCategory.map((c, i) => <span className={`px-4 py-2 hover:bg-indigo-500 hover:text-white hover:shadow-lg w-full cursor-pointer ${category === c.name && 'bg-indigo-500'}`} onClick={() => {
-                                                setCateShow(false)
-                                                setCategory(c.name)
-                                                setSearchValue('')
-                                                setAllCategory(categorys)
-                                            }}>{c.name}</span>)
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='flex flex-col w-full gap-1'>
-                                <label htmlFor="stock">Stock</label>
-                                <input className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' onChange={inputHandle} value={state.stock} type="number" min='0' placeholder='product stock' name='stock' id='stock' />
-                            </div>
-                        </div>
-
-                        <div className='flex flex-col mb-3 md:flex-row gap-4 w-full text-[#d0d2d6]'>
-                            <div className='flex flex-col w-full gap-1'>
-                                <label htmlFor="price">Price</label>
-                                <input className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' onChange={inputHandle} value={state.price} type="number" placeholder='price' name='price' id='price' />
-                            </div>
-                            <div className='flex flex-col w-full gap-1'>
-                                <label htmlFor="discount">Discount</label>
-                                <input min='0' className='px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]' onChange={inputHandle} value={state.discount} type="number" placeholder='%discount%' name='discount' id='discount' />
-                            </div>
-                        </div>
-                        <div className='flex flex-col w-full gap-1 text-[#d0d2d6] mb-5'>
-                            <label htmlFor="description">Description</label>
-                            <JoditEditor
-
-                                ref={editor}
-                                value={content}
-                                // config={config}
-                                tabIndex={1} // tabIndex of textarea
-                                onBlur={newContent => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
-                                onChange={newContent => { }}
-                            />
-                        </div>
-                        <div className='grid lg:grid-cols-4 grid-cols-1 md:grid-cols-3 sm:grid-cols-2 sm:gap-4 md:gap-4 xs:gap-4 gap-3 w-full text-[#d0d2d6] mb-4'>
-                            {
-                                imageShow.map((img, i) => <div className='h-[180px] relative'>
-                                    <label htmlFor={i}>
-                                        <img className='w-full h-full rounded-sm' src={img.url} alt="" />
+                            Product Information
+                        </h2>
+                        <p className="text-gray-400 text-sm mt-2">
+                            Fill in all required fields to add a new product
+                        </p>
+                    </div>
+                    
+                    <form onSubmit={add} className="p-4 md:p-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Left Column */}
+                            <div className="space-y-5">
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-gray-300 font-medium flex items-center gap-2">
+                                        Product Name
+                                        <span className="text-red-500">*</span>
                                     </label>
-                                    <input onChange={(e) => changeImage(e.target.files[0], i)} type="file" id={i} className='hidden' />
-                                    <span onClick={() => removeImage(i)} className='p-2 z-10 cursor-pointer bg-slate-700 hover:shadow-lg hover:shadow-slate-400/50 text-white absolute top-1 right-1 rounded-full'><IoCloseSharp /></span>
+                                    <input 
+                                        className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 transition-all" 
+                                        onChange={inputHandle} 
+                                        value={state.name} 
+                                        type="text" 
+                                        placeholder="Enter product name" 
+                                        name="name" 
+                                        id="name" 
+                                        required
+                                    />
                                 </div>
-                                )
-                            }
-                            <label className='flex justify-center items-center flex-col h-[180px] cursor-pointer border border-dashed hover:border-indigo-500 w-full text-[#d0d2d6]' htmlFor="image">
-                                <span><BsImages /></span>
-                                <span>select image</span>
-                            </label>
-                            <input multiple onChange={inmageHandle} className='hidden' type="file" id='image' />
+                                
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-gray-300 font-medium flex items-center gap-2">
+                                        Product Brand
+                                        <span className="text-red-500">*</span>
+                                    </label>
+                                    <input 
+                                        className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 transition-all" 
+                                        onChange={inputHandle} 
+                                        value={state.brand} 
+                                        type="text" 
+                                        placeholder="Enter product brand" 
+                                        name="brand" 
+                                        id="brand" 
+                                        required
+                                    />
+                                </div>
+                                
+                                <div className="flex flex-col gap-2 relative">
+                                    <label className="text-gray-300 font-medium flex items-center gap-2">
+                                        Category & Subcategory
+                                        <span className="text-red-500">*</span>
+                                    </label>
+                                    <div 
+                                        onClick={() => setCateShow(!cateShow)} 
+                                        className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 cursor-pointer flex justify-between items-center"
+                                    >
+                                        <span className={category ? 'text-white' : 'text-gray-500'}>
+                                            {category 
+                                                ? (subcategory ? `${category} > ${subcategory}` : category) 
+                                                : "Select category"}
+                                        </span>
+                                        <svg 
+                                            className={`w-4 h-4 text-gray-400 transition-transform ${cateShow ? 'rotate-180' : ''}`} 
+                                            fill="none" 
+                                            stroke="currentColor" 
+                                            viewBox="0 0 24 24" 
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </div>
+                                    <div 
+                                        className={`absolute top-full left-0 right-0 mt-2 bg-gray-800 rounded-xl shadow-xl z-10 overflow-hidden transition-all ${cateShow ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
+                                    >
+                                        <div className="p-3 border-b border-slate-700">
+                                            <input 
+                                                value={searchValue} 
+                                                onChange={categorySearch} 
+                                                className="px-4 py-2 w-full focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-700 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-500 transition-all" 
+                                                type="text" 
+                                                placeholder="Search categories..." 
+                                                autoFocus
+                                            />
+                                        </div>
+                                        <div className="max-h-60 overflow-y-auto custom-scrollbar">
+                                            {allCategory.length > 0 ? (
+                                                allCategory.map((c, i) => (
+                                                    <div 
+                                                        key={i}
+                                                        className="relative"
+                                                        onMouseEnter={() => setHoveredCategory(c._id)}
+                                                        onMouseLeave={() => setHoveredCategory(null)}
+                                                    >
+                                                        <div 
+                                                            className={`px-4 py-3 hover:bg-indigo-900/50 cursor-pointer transition-colors flex justify-between items-center ${category === c.name ? 'bg-indigo-900/30 text-indigo-300' : 'text-gray-300'}`} 
+                                                            onClick={() => {
+                                                                setCategory(c.name);
+                                                                setSubcategory('');
+                                                                setCateShow(c.subcategories?.length > 0);
+                                                                if (c.subcategories?.length === 0) {
+                                                                    setCateShow(false);
+                                                                }
+                                                            }}
+                                                        >
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                                                                {c.name}
+                                                            </div>
+                                                            {c.subcategories?.length > 0 && (
+                                                                <svg 
+                                                                    className="w-4 h-4 text-gray-400" 
+                                                                    fill="none" 
+                                                                    stroke="currentColor" 
+                                                                    viewBox="0 0 24 24" 
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                >
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                                                                </svg>
+                                                            )}
+                                                        </div>
+                                                        
+                                                        {/* Subcategories dropdown */}
+                                                        {hoveredCategory === c._id && c.subcategories?.length > 0 && (
+                                                            <div className="absolute left-full top-0 ml-1 w-48 bg-gray-800 border border-slate-700 rounded-lg shadow-lg z-20">
+                                                                <div className="max-h-60 overflow-y-auto custom-scrollbar py-2">
+                                                                    {c.subcategories.map((sub, idx) => (
+                                                                        <div
+                                                                            key={idx}
+                                                                            className={`px-4 py-3 hover:bg-indigo-900/50 cursor-pointer ${subcategory === sub ? 'bg-indigo-900/30 text-indigo-300' : 'text-gray-300'}`}
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                setCategory(c.name);
+                                                                                setSubcategory(sub);
+                                                                                setCateShow(false);
+                                                                            }}
+                                                                        >
+                                                                            {sub}
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="px-4 py-4 text-center text-gray-500">
+                                                    No categories found
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Right Column */}
+                            <div className="space-y-5">
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-gray-300 font-medium flex items-center gap-2">
+                                        Stock Quantity
+                                        <span className="text-red-500">*</span>
+                                    </label>
+                                    <input 
+                                        className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 transition-all" 
+                                        onChange={inputHandle} 
+                                        value={state.stock} 
+                                        type="number" 
+                                        min="0" 
+                                        placeholder="Enter available stock" 
+                                        name="stock" 
+                                        id="stock" 
+                                        required
+                                    />
+                                </div>
+                                
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-gray-300 font-medium flex items-center gap-2">
+                                        Price (₦)
+                                        <span className="text-red-500">*</span>
+                                    </label>
+                                    <input 
+                                        className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 transition-all" 
+                                        onChange={inputHandle} 
+                                        value={state.price} 
+                                        type="number" 
+                                        placeholder="Enter price" 
+                                        name="price" 
+                                        id="price" 
+                                        required
+                                    />
+                                </div>
+                                
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-gray-300 font-medium">Discount (%)</label>
+                                    <input 
+                                        min="0" 
+                                        max="100"
+                                        className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 transition-all" 
+                                        onChange={inputHandle} 
+                                        value={state.discount} 
+                                        type="number" 
+                                        placeholder="Enter discount percentage" 
+                                        name="discount" 
+                                        id="discount" 
+                                    />
+                                </div>
+                            </div>
                         </div>
-                        <div className='flex'>
-                            <button disabled={loader ? true : false} className='bg-blue-500 w-[190px] hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3'>
-                                {
-                                    loader ? <PropagateLoader color='#fff' cssOverride={overrideStyle} /> : 'Add product'
-                                }
+                        
+                        <div className="mt-8">
+                            <label className="block text-gray-300 font-medium mb-3 flex items-center gap-2">
+                                Product Description
+                                <span className="text-red-500">*</span>
+                            </label>
+                            <div className="bg-gray-700/70 border border-slate-600 rounded-xl overflow-hidden">
+                                <JoditEditor
+                                    ref={editor}
+                                    value={content}
+                                    tabIndex={1}
+                                    onBlur={newContent => setContent(newContent)}
+                                    onChange={newContent => { }}
+                                    config={{
+                                        theme: 'dark',
+                                        readonly: false,
+                                        toolbarAdaptive: false,
+                                        toolbarButtonSize: 'medium',
+                                        style: {
+                                            color: '#d1d5db',
+                                            background: 'transparent'
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        
+                        {/* Category-specific Specifications */}
+                        {categorySpecs.length > 0 && (
+                            <div className="mt-8">
+                                <div className="flex justify-between items-center mb-4">
+                                    <label className="block text-gray-300 font-medium flex items-center gap-2">
+                                        Product Specifications
+                                        <span className="text-red-500">*</span>
+                                    </label>
+                                    <span className="text-sm text-indigo-400">
+                                        {category}{subcategory ? ` > ${subcategory}` : ''}
+                                    </span>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {categorySpecs.map((spec, index) => (
+                                        <div key={index} className="flex flex-col gap-2">
+                                            <label className="text-gray-300 font-medium">{spec}</label>
+                                            <input
+                                                type="text"
+                                                value={specifications[spec] || ''}
+                                                onChange={(e) => handleSpecChange(spec, e.target.value)}
+                                                placeholder={`Enter ${spec}`}
+                                                className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 transition-all"
+                                                required
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        
+                        <div className="mt-8">
+                            <div className="flex justify-between items-center mb-4">
+                                <label className="block text-gray-300 font-medium flex items-center gap-2">
+                                    Product Images
+                                    <span className="text-red-500">*</span>
+                                </label>
+                                <span className="text-sm text-gray-500">{images.length}/8 images</span>
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                {imageShow.map((img, i) => (
+                                    <div key={i} className="relative group h-40 md:h-48 rounded-xl overflow-hidden border-2 border-slate-700 hover:border-indigo-500 transition-all">
+                                        <label htmlFor={i} className="block w-full h-full cursor-pointer">
+                                            <img 
+                                                className="w-full h-full object-cover group-hover:opacity-70 transition-opacity" 
+                                                src={img.url} 
+                                                alt="Preview" 
+                                            />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <span className="text-white text-sm font-medium">Change</span>
+                                            </div>
+                                        </label>
+                                        <input 
+                                            onChange={(e) => changeImage(e.target.files[0], i)} 
+                                            type="file" 
+                                            id={i} 
+                                            className="hidden" 
+                                            accept="image/*"
+                                        />
+                                        <button 
+                                            type="button"
+                                            onClick={() => removeImage(i)} 
+                                            className="absolute top-2 right-2 bg-gray-800/80 p-1.5 rounded-full text-red-400 shadow-md hover:bg-red-500 hover:text-white transition-colors"
+                                        >
+                                            <IoCloseSharp className="text-lg" />
+                                        </button>
+                                    </div>
+                                ))}
+                                
+                                {imageShow.length < 8 && (
+                                    <>
+                                        <label 
+                                            className="flex flex-col justify-center items-center h-40 md:h-48 rounded-xl border-2 border-dashed border-slate-700 bg-gray-700/30 text-gray-400 hover:border-indigo-500 hover:text-indigo-400 transition-all cursor-pointer" 
+                                            htmlFor="image"
+                                        >
+                                            <div className="p-3 rounded-full bg-indigo-900/30 text-indigo-400 mb-3">
+                                                <BsUpload className="text-2xl" />
+                                            </div>
+                                            <span className="font-medium text-center px-2">Upload Images</span>
+                                            <span className="text-xs text-gray-500 mt-1">Max 8 images</span>
+                                        </label>
+                                        <input 
+                                            multiple 
+                                            onChange={imageHandle} 
+                                            className="hidden" 
+                                            type="file" 
+                                            id="image" 
+                                            accept="image/*"
+                                        />
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                        
+                        <div className="mt-10 flex justify-center">
+                            <button 
+                                disabled={loader} 
+                                className={`w-full max-w-md py-4 px-6 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center ${
+                                    loader 
+                                        ? 'bg-indigo-800' 
+                                        : 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 hover:shadow-xl'
+                                }`}
+                            >
+                                {loader ? (
+                                    <PropagateLoader color="#fff" cssOverride={overrideStyle} />
+                                ) : (
+                                    <>
+                                        <BsPlusLg className="mr-2" />
+                                        Add Product
+                                    </>
+                                )}
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
+            
+            <style jsx>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: #4b5563;
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: #3b82f6;
+                }
+            `}</style>
         </div>
-    )
-}
+    );
+};
 
-export default AddProduct
+export default AddProduct;
