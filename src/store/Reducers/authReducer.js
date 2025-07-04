@@ -176,6 +176,7 @@ export const authReducer = createSlice({
             state.successMessage = payload.message
             state.token = payload.token
             state.role = returnRole(payload.token)
+            localStorage.setItem('accessToken', payload.token);
         },
         [seller_register.pending]: (state, _) => {
             state.loader = true

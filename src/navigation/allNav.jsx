@@ -131,13 +131,13 @@ export const allNav = [
         role: 'seller',
         path: '/seller/dashboard/payments'
     },
-    {
-        id: 15,
-        title: 'Chat Customer',
-        icon: <QuestionAnswerIcon />,
-        role: 'seller',
-        path: '/seller/dashboard/chat-customer'
-    },
+    // {
+    //     id: 15,
+    //     title: 'Chat Customer',
+    //     icon: <QuestionAnswerIcon />,
+    //     role: 'seller',
+    //     path: '/seller/dashboard/chat-customer'
+    // },
     {
         id: 16,
         title: 'Chat Support',
@@ -147,7 +147,7 @@ export const allNav = [
     },
     {
         id: 17,
-        title: 'Profile',
+        title: 'Account',
         icon: <AccountBoxIcon />,
         role: 'seller',
         path: '/seller/dashboard/profile'

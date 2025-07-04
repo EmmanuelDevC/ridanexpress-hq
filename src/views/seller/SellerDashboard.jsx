@@ -31,6 +31,7 @@ const SellerDashboard = () => {
     }, []);
 
     const {
+        totalSale,
         totalOrder,
         totalProduct,
         totalPendingOrder,
