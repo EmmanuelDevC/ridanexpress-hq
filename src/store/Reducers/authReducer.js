@@ -146,8 +146,23 @@ export const authReducer = createSlice({
     },
     reducers: {
         messageClear: (state, _) => {
-            state.errorMessage = ""
-            state.successMessage = ""
+            state.errorMessage = "";
+            state.successMessage = "";
+        },
+        logoutUser: (state) => {
+            state.token = null;
+            state.role = '';
+            state.userInfo = '';
+            state.successMessage = '';
+            state.errorMessage = '';
+            localStorage.removeItem('accessToken');
+        },
+        updateToken: (state, action) => {
+            state.token = action.payload;
+            localStorage.setItem('accessToken', action.payload);
+        },
+        updateUserInfo: (state, action) => {
+            state.userInfo = action.payload;
         }
     },
     extraReducers: {
@@ -163,6 +178,10 @@ export const authReducer = createSlice({
             state.successMessage = payload.message
             state.token = payload.token
             state.role = returnRole(payload.token)
+            // Add this to update user info immediately
+            if (payload.userInfo) {
+                state.userInfo = payload.userInfo;
+            }
         },
         [seller_login.pending]: (state, _) => {
             state.loader = true
@@ -177,6 +196,10 @@ export const authReducer = createSlice({
             state.token = payload.token
             state.role = returnRole(payload.token)
             localStorage.setItem('accessToken', payload.token);
+            // Add this to update user info immediately
+            if (payload.userInfo) {
+                state.userInfo = payload.userInfo;
+            }
         },
         [seller_register.pending]: (state, _) => {
             state.loader = true
@@ -190,6 +213,10 @@ export const authReducer = createSlice({
             state.successMessage = payload.message
             state.token = payload.token
             state.role = returnRole(payload.token)
+            // Add this to update user info immediately
+            if (payload.userInfo) {
+                state.userInfo = payload.userInfo;
+            }
         },
         [get_user_info.fulfilled]: (state, { payload }) => {
             state.loader = false
@@ -219,5 +246,10 @@ export const authReducer = createSlice({
     }
 
 })
-export const { messageClear } = authReducer.actions
+export const {
+    messageClear,
+    logoutUser,
+    updateToken,
+    updateUserInfo
+} = authReducer.actions
 export default authReducer.reducer

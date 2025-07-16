@@ -130,7 +130,7 @@ const AdminLogin = () => {
                 </div>
                 
                 <div className="mt-6 text-center">
-                    <p className="text-sm text-gray-white">
+                    <p className="text-sm text-white">
                         For security reasons, please log out after each session.
                     </p>
                 </div>
