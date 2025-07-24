@@ -8,6 +8,7 @@ import { PropagateLoader } from 'react-spinners';
 import { FadeLoader } from 'react-spinners';
 import toast from 'react-hot-toast';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { overrideStyle } from '../../utils/utils';
 import {
     profile_image_upload,
@@ -59,7 +60,10 @@ const Profile = () => {
                 documentType: userInfo.shopInfo.documentType || '',
                 id_number: userInfo.shopInfo.id_number || '',
                 documentFile: null,
-                documentPreview: userInfo.shopInfo.document || null
+                documentPreview: userInfo.shopInfo.document || null,
+                documentVerification: userInfo.shopInfo.documentVerification || {
+                    status: 'pending'
+                }
             });
             setActiveTab(userInfo.shopInfo.businessType || 'small');
         }
@@ -208,51 +212,21 @@ const Profile = () => {
         return null;
     };
 
-    const VerificationBadge = ({ status }) => {
-        const statusConfig = {
-            pending: {
-                color: 'bg-gradient-to-r from-yellow-600 to-orange-500',
-                text: 'Verification Pending',
-                icon: <BsClock className="mr-1" />,
-                description: 'Your document is being verified. This usually takes 1-2 business days.'
-            },
-            verified: {
-                color: 'bg-gradient-to-r from-green-500 to-emerald-600',
-                text: 'Verified ID',
-                icon: <BsCheckCircle className="mr-1" />,
-                description: 'Identity successfully verified with Dojah'
-            },
-            manual_review: {
-                color: 'bg-gradient-to-r from-orange-500 to-amber-600',
-                text: 'Manual Review Needed',
-                icon: <BsExclamationTriangle className="mr-1" />,
-                description: 'Our team is reviewing your document. We\'ll notify you when complete.'
-            },
-            failed: {
-                color: 'bg-gradient-to-r from-red-600 to-rose-700',
-                text: 'Verification Failed',
-                icon: <BsExclamationTriangle className="mr-1" />,
-                description: 'We couldn\'t verify your document. Please upload a clear, valid ID.'
-            },
-            error: {
-                color: 'bg-gradient-to-r from-purple-600 to-indigo-700',
-                text: 'Verification Error',
-                icon: <BsExclamationTriangle className="mr-1" />,
-                description: 'Temporary verification issue. Please try again later.'
+    //Persona Verification
+    const startPersonaVerification = async () => {
+        try {
+            const response = await axios.post(
+                '/api/create-inquiry',
+                {},
+                { withCredentials: true }
+            );
+
+            if (response.data.hostedUrl) {
+                window.location.href = response.data.hostedUrl;
             }
-        };
-
-        const config = statusConfig[status] || statusConfig.pending;
-
-        return (
-            <div className="flex flex-col">
-                <span className={`${config.color} text-white px-3 py-1 rounded-full text-xs font-medium flex items-center self-start mb-2`}>
-                    {config.icon}
-                    {config.text}
-                </span>
-                <p className="text-gray-400 text-sm">{config.description}</p>
-            </div>
-        );
+        } catch (error) {
+            toast.error('Failed to start verification: ' + (error.response?.data?.error || error.message));
+        }
     };
 
     const businessBadge = getBusinessBadge();
@@ -275,16 +249,16 @@ const Profile = () => {
     };
 
     return (
-        <div className='lg:px-4 px-2 lg:py-8 py-2 bg-gradient-to-b from-slate-900 to-gray-900 min-h-screen'>
+        <div className='lg:px-4 lg:py-8  bg-gradient-to-b from-slate-900 to-gray-900 min-h-screen'>
             <div className='max-w-7xl mx-auto'>
                 {/* Production Security Badge */}
                 {process.env.NODE_ENV === 'production' && (
                     <div className="mb-6 p-3 bg-gradient-to-r from-emerald-900/30 to-green-900/20 border border-emerald-700 rounded-xl flex items-center">
                         <BsShieldLock className="text-emerald-400 text-xl mr-3" />
                         <div>
-                            <p className="text-emerald-300 font-medium">Active • Dojah</p>
+                            <p className="text-emerald-300 font-medium">Active • Persona</p>
                             <p className="text-emerald-400 text-xs mt-1">
-                                All documents are securely verified and encrypted
+                                Identity verification powered by Persona
                             </p>
                         </div>
                     </div>
@@ -293,7 +267,7 @@ const Profile = () => {
                 <div className='flex flex-col lg:flex-row gap-6'>
                     {/* Left Column - Profile Section */}
                     <div className='w-full lg:w-8/12'>
-                        <div className='bg-gradient-to-b from-gray-800 to-gray-850 rounded-2xl p-4 shadow-xl border border-gray-700'>
+                        <div className='bg-gradient-to-b from-gray-800 to-gray-850 p-4 border border-gray-700'>
                             <div className="flex justify-between items-start mb-6">
                                 <h2 className='text-2xl font-bold text-white'>Business Profile</h2>
                                 {businessBadge && (
@@ -401,14 +375,14 @@ const Profile = () => {
                                         <div className='flex items-center justify-between pt-4 border-t border-gray-700'>
                                             <div>
                                                 <p className='text-gray-400 text-sm mb-1'>Payment Account</p>
-                                                <p>
+                                                <p className='flex items-center gap-2 text-sm font-medium'>
                                                     {userInfo.payment === 'active' ? (
                                                         <span className='text-green-400 font-medium'>Active</span>
                                                     ) : (
                                                         <span
                                                             onClick={activateFlutterwaveAccount}
-                                                            className='text-orange-500 font-medium cursor-pointer hover:underline'
-                                                        >
+                                                            className='text-white text-sm font-base bg-indigo-700 py-2 px-3 cursor-pointer'
+                                                        > 
                                                             {sellerReducer.loader ? 'Activating...' : 'Activate Payment Account'}
                                                         </span>
                                                     )}
@@ -504,156 +478,42 @@ const Profile = () => {
                                             />
                                         </div>
 
-                                        <div>
-                                            <label htmlFor="documentType" className='block text-gray-400 text-sm mb-2'>Identity Document</label>
-                                            <select
-                                                value={state.documentType}
-                                                onChange={inputHandle}
-                                                className='w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white'
-                                                name='documentType'
-                                                id='documentType'
-                                                required
-                                            >
-                                                <option value="">Select Document Type</option>
-                                                <option value="passport">Passport</option>
-                                                <option value="national_id">National ID (NIN)</option>
-                                                <option value="driver_license">Driver's License</option>
-                                                <option value="voter_card">Voter's Card</option>
-                                            </select>
+                                        <div >
+                                            <h3 className="text-white font-base text-sm mb-4 flex items-center">
+                                                <BsShieldCheck className="mr-2 text-blue-400" />
+                                                Identity Verification
+                                            </h3>
+
+                                            <div>
+                                                <button
+                                                    type="button"
+                                                    onClick={startPersonaVerification}
+                                                    className="w-auto bg-indigo-500 text-sm text-white font-medium rounded-full px-6 py-3 flex items-center justify-center"
+                                                >
+                                                    <BsShieldCheck className="mr-2" />
+                                                    Verify Identity
+                                                </button>
+
+                                                {userInfo?.shopInfo?.documentVerification?.status && (
+                                                    <div className="mt-4 p-3 bg-gradient-to-b from-gray-800/30 to-gray-800/10 rounded-lg border border-gray-600">
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-gray-300 text-sm">Verification Status:</span>
+                                                            <span className={`px-2 py-1 rounded text-xs font-medium ${userInfo.shopInfo.documentVerification.status === 'verified'
+                                                                ? 'bg-green-900/30 text-green-400 border border-green-700'
+                                                                : userInfo.shopInfo.documentVerification.status === 'pending'
+                                                                    ? 'bg-yellow-900/30 text-yellow-400 border border-yellow-700'
+                                                                    : 'bg-red-900/30 text-red-400 border border-red-700'
+                                                                }`}>
+                                                                {userInfo.shopInfo.documentVerification.status.charAt(0).toUpperCase() +
+                                                                    userInfo.shopInfo.documentVerification.status.slice(1)}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
 
-                                    {state.documentType && (
-                                        <div>
-                                            <label htmlFor="id_number" className='block text-gray-400 text-sm mb-2'>
-                                                {state.documentType === 'national_id' ? 'National ID Number (NIN)' :
-                                                    state.documentType === 'passport' ? 'Passport Number' :
-                                                        'ID Number'}
-                                            </label>
-                                            <input
-                                                value={state.id_number}
-                                                onChange={inputHandle}
-                                                className='w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 outline-none text-white'
-                                                type="text"
-                                                placeholder='Enter your ID number'
-                                                name='id_number'
-                                                id='id_number'
-                                                required
-                                            />
-                                        </div>
-                                    )}
-
-                                    {state.documentType && (
-                                        <div className="bg-gradient-to-b from-gray-800/30 to-gray-800/10 rounded-xl p-1">
-                                            <h3 className="text-white font-medium mb-4 flex items-center">
-                                                <BsFileText className="mr-2 text-orange-500" />
-                                                Upload {state.documentType.replace('_', ' ')} Document
-                                            </h3>
-
-                                            <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-600 rounded-xl p-2 transition-colors hover:border-orange-500 bg-gray-800/20">
-                                                {state.documentPreview ? (
-                                                    <div className="relative">
-                                                        <img
-                                                            src={state.documentPreview}
-                                                            alt="Document preview"
-                                                            className="max-h-48 rounded-lg border border-gray-600"
-                                                        />
-                                                        <button
-                                                            className="absolute -top-3 -right-3 bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700"
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                setState({
-                                                                    ...state,
-                                                                    documentPreview: null,
-                                                                    documentFile: null
-                                                                });
-                                                            }}
-                                                        >
-                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                                                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                                            </svg>
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <>
-                                                        <BsCloudUpload className="text-gray-500 text-4xl mb-3" />
-                                                        <p className="text-gray-400 text-sm mb-4">
-                                                            Upload your {state.documentType.replace('_', ' ')} document
-                                                        </p>
-                                                        <label
-                                                            htmlFor="documentUpload"
-                                                            className="px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-800 rounded-lg text-white hover:from-gray-600 hover:to-gray-700 cursor-pointer transition-all"
-                                                        >
-                                                            Select File
-                                                        </label>
-                                                        <input
-                                                            type="file"
-                                                            id="documentUpload"
-                                                            className="hidden"
-                                                            onChange={handleDocumentUpload}
-                                                            accept=".jpg,.jpeg,.png,.pdf"
-                                                        />
-                                                        <p className="text-gray-500 text-xs mt-3">
-                                                            Supported formats: JPG, PNG, PDF (max 5MB)
-                                                        </p>
-                                                    </>
-                                                )}
-                                            </div>
-
-                                            {/* Document Requirements */}
-                                            <div className="mt-4 bg-gray-800/30 rounded-lg p-4 border border-gray-600">
-                                                <h4 className="text-white text-sm font-medium mb-2">Document Requirements:</h4>
-                                                <ul className="text-gray-400 text-sm space-y-1">
-                                                    <li>• Must be government-issued ID</li>
-                                                    <li>• Clear photo of entire document</li>
-                                                    <li>• All corners visible</li>
-                                                    <li>• No glare or reflections</li>
-                                                    <li>• Valid expiration date (if applicable)</li>
-                                                </ul>
-                                                <p className="text-orange-400 text-xs mt-3">
-                                                    Documents are verified via Dojah and stored securely
-                                                </p>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* {state.documentType && userInfo?.shopInfo?.documentVerification && (
-                                        <div className="bg-gradient-to-b from-gray-800/30 to-gray-800/10 rounded-xl p-5 border border-gray-600">
-                                            <div className="flex justify-between items-start mb-3">
-                                                <h3 className="text-white font-medium flex items-center">
-                                                    <BsShieldCheck className="mr-2 text-blue-400" />
-                                                    Document Verification
-                                                </h3>
-                                                <VerificationBadge status={userInfo.shopInfo.documentVerification.status} />
-                                            </div>
-
-                                            {userInfo.shopInfo.documentVerification.checks.length > 0 && (
-                                                <div className="mb-3">
-                                                    <p className="text-gray-400 text-sm mb-1">Security Checks:</p>
-                                                    <ul className="text-green-400 text-sm space-y-1">
-                                                        {userInfo.shopInfo.documentVerification.checks.map((check, i) => (
-                                                            <li key={i} className="flex items-center">
-                                                                <span className="mr-2">✓</span> {check}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            )}
-
-                                            {userInfo.shopInfo.documentVerification.issues.length > 0 && (
-                                                <div>
-                                                    <p className="text-gray-400 text-sm mb-1">Issues Found:</p>
-                                                    <ul className="text-red-400 text-sm space-y-1">
-                                                        {userInfo.shopInfo.documentVerification.issues.map((issue, i) => (
-                                                            <li key={i} className="flex items-center">
-                                                                <span className="mr-2">⚠️</span> {issue}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )} */}
 
                                     {activeTab === 'registered' && (
                                         <div className='p-5 bg-gradient-to-b from-gray-800/30 to-gray-800/10 rounded-xl border border-gray-600'>
@@ -694,10 +554,10 @@ const Profile = () => {
 
                                     <button
                                         disabled={loader}
-                                        className={`w-full bg-gradient-to-r from-orange-500 to-amber-600 text-white font-medium rounded-lg px-7 py-3.5 hover:from-orange-400 hover:to-amber-500 transition-all shadow-lg shadow-orange-500/30`}
+                                        className={`w-full bg-white text-indigo-500 font-medium rounded-full px-7 py-3`}
                                     >
                                         {loader ? (
-                                            <PropagateLoader color='#fff' cssOverride={overrideStyle} />
+                                            <PropagateLoader color='indigo' cssOverride={overrideStyle} />
                                         ) : 'Save Business Information'}
                                     </button>
                                 </form>
@@ -790,8 +650,8 @@ const Profile = () => {
                                         </p>
                                     </div>
                                     <div className={`px-3 py-1 rounded-full text-xs font-medium ${userInfo.payment === 'active'
-                                            ? 'bg-green-900/30 text-green-400 border border-green-700'
-                                            : 'bg-amber-900/30 text-amber-400 border border-amber-700'
+                                        ? 'bg-green-900/30 text-green-400 border border-green-700'
+                                        : 'bg-amber-900/30 text-amber-400 border border-amber-700'
                                         }`}>
                                         {userInfo.payment === 'active' ? 'Verified' : 'Pending'}
                                     </div>
