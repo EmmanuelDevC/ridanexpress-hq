@@ -3,8 +3,8 @@ import axios from 'axios';
 import store from '../store'; // Default import
 import { logoutUser, updateToken } from '../store/Reducers/authReducer'; // Named imports
 
-const API_BASE_URL = 'https://martafrik-api.onrender.com';
-// const API_BASE_URL = 'http://localhost:5000';
+// const API_BASE_URL = 'https://ridanexpress-api-lqo6.onrender.com';
+const API_BASE_URL = 'http://localhost:5000';
 const HMAC_SECRET = process.env.REACT_APP_HMAC_SECRET; 
 const REQUEST_TIMEOUT = 15000;
 const MAX_RETRIES = 2;

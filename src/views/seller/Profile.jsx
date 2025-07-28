@@ -8,6 +8,8 @@ import { PropagateLoader } from 'react-spinners';
 import { FadeLoader } from 'react-spinners';
 import toast from 'react-hot-toast';
 import { useSelector, useDispatch } from 'react-redux';
+import axios from 'axios';
+import { api_url } from '../../utils/utils';
 import { useNavigate } from 'react-router-dom';
 import { overrideStyle } from '../../utils/utils';
 import {
@@ -34,7 +36,7 @@ const Profile = () => {
     });
 
     const dispatch = useDispatch();
-    const { userInfo, loader, successMessage, errorMessage } = useSelector(state => state.auth);
+    const { userInfo, loader, successMessage, errorMessage, token } = useSelector(state => state.auth);
     const sellerReducer = useSelector(state => state.seller);
     const [activeTab, setActiveTab] = useState('small');
     const [scrollToBusinessInfo, setScrollToBusinessInfo] = useState(false);
@@ -215,17 +217,37 @@ const Profile = () => {
     //Persona Verification
     const startPersonaVerification = async () => {
         try {
+            if (!token) {
+                toast.error('Authentication token missing');
+                return;
+            }
+
             const response = await axios.post(
-                '/api/create-inquiry',
+                `${api_url}/api/create-inquiry`,
                 {},
-                { withCredentials: true }
+                {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
             );
 
             if (response.data.hostedUrl) {
                 window.location.href = response.data.hostedUrl;
+            } else {
+                console.error('No hosted URL in response:', response);
+                toast.error('Verification URL not received');
             }
         } catch (error) {
-            toast.error('Failed to start verification: ' + (error.response?.data?.error || error.message));
+            console.error('Verification error:', {
+                message: error.message,
+                response: error.response?.data,
+                stack: error.stack
+            });
+
+            toast.error('Verification failed: ' +
+                (error.response?.data?.error || error.message));
         }
     };
 
@@ -327,7 +349,7 @@ const Profile = () => {
                                 <div className='w-full md:w-5/12'>
                                     <div className='flex justify-center'>
                                         {userInfo?.image ? (
-                                            <label htmlFor="img" className='h-48 w-48 relative rounded-full lg-rounded-xl overflow-hidden cursor-pointer border-2 border-gray-700 hover:border-orange-500 transition-all shadow-lg'>
+                                            <label htmlFor="img" className='h-48 w-48 relative rounded-lg lg-rounded-xl overflow-hidden cursor-pointer border-2 border-gray-700 hover:border-orange-500 transition-all shadow-lg'>
                                                 <img className='w-full h-full object-cover' src={userInfo.image} alt="Profile" />
                                                 {loader && (
                                                     <div className='absolute inset-0 bg-gray-900/80 flex justify-center items-center'>
@@ -382,7 +404,7 @@ const Profile = () => {
                                                         <span
                                                             onClick={activateFlutterwaveAccount}
                                                             className='text-white text-sm font-base bg-indigo-700 py-2 px-3 cursor-pointer'
-                                                        > 
+                                                        >
                                                             {sellerReducer.loader ? 'Activating...' : 'Activate Payment Account'}
                                                         </span>
                                                     )}
