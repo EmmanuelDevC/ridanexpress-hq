@@ -70,7 +70,10 @@ export const get_products = createAsyncThunk(
             }
         }
         try {
-            const { data } = await axios.get(`${api_url}/api/products-get?page=${page}&&searchValue=${searchValue}&&parPage=${parPage}`, config)
+            const { data } = await axios.get(
+                `${api_url}/api/products-get?page=${page}&searchValue=${searchValue}&parPage=${parPage}`,
+                config
+            )
             return fulfillWithValue(data)
         } catch (error) {
             return rejectWithValue(error.response.data)

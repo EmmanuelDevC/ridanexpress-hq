@@ -1,6 +1,15 @@
 // src/pages/seller/Products.js
 import React, { useState, useEffect } from 'react';
-import { FaEdit, FaEye, FaTrash, FaPlus } from 'react-icons/fa';
+import {
+    FaEdit,
+    FaEye,
+    FaTrash,
+    FaPlus,
+    FaCheckCircle,
+    FaTimesCircle,
+    FaClock,
+    FaInfoCircle
+} from 'react-icons/fa'
 import { GiKnightBanner } from 'react-icons/gi';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -38,6 +47,44 @@ const Products = () => {
         }).format(amount);
     };
 
+    const getStatusBadge = (status, reason = '') => {
+        switch (status) {
+            case 'pending':
+                return (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-amber-900/30 text-amber-400 rounded-md text-xs">
+                        <FaClock className="text-xs" /> Pending
+                    </div>
+                );
+            case 'approved':
+                return (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-emerald-900/30 text-emerald-400 rounded-md text-xs">
+                        <FaCheckCircle className="text-xs" /> Approved
+                    </div>
+                );
+            case 'rejected':
+                return (
+                    <div
+                        className="flex items-center gap-1 px-2 py-1 bg-red-900/30 text-red-400 rounded-md text-xs cursor-help relative group"
+                        title={reason ? `Reason: ${reason}` : 'Rejected'}
+                    >
+                        <FaTimesCircle className="text-xs" /> Rejected
+                        {reason && (
+                            <div className="absolute hidden group-hover:block bottom-full mb-2 left-0 w-64 p-2 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 text-xs text-gray-300">
+                                <div className="font-medium text-red-400 mb-1">Rejection Reason:</div>
+                                {reason}
+                            </div>
+                        )}
+                    </div>
+                );
+            default:
+                return (
+                    <div className="px-2 py-1 bg-gray-700 rounded-md text-gray-300 text-xs">
+                        Unknown
+                    </div>
+                );
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-900 to-gray-900">
@@ -61,7 +108,7 @@ const Products = () => {
                             Manage your product listings
                         </p>
                     </div>
-                    
+
                     <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                         <div className="relative w-full sm:w-64">
                             <input
@@ -77,7 +124,7 @@ const Products = () => {
                                 </svg>
                             </div>
                         </div>
-                        
+
                         <select
                             value={parPage}
                             onChange={(e) => setParPage(e.target.value)}
@@ -88,8 +135,8 @@ const Products = () => {
                             <option value="20">20 per page</option>
                             <option value="50">50 per page</option>
                         </select>
-                        
-                        <Link 
+
+                        <Link
                             to="/seller/dashboard/add-product"
                             className="flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg px-4 py-2.5 transition-all shadow-lg"
                         >
@@ -110,6 +157,8 @@ const Products = () => {
                                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Price</th>
                                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Discount</th>
                                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Stock</th>
+                                    {/* NEW STATUS COLUMN */}
+                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
                                     <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
@@ -119,10 +168,10 @@ const Products = () => {
                                         <tr key={i} className="hover:bg-gray-800/40 transition-colors">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex-shrink-0 h-12 w-12 rounded-lg overflow-hidden border border-gray-700">
-                                                    <img 
-                                                        className="h-full w-full object-cover" 
-                                                        src={d.images[0] || 'https://via.placeholder.com/50'} 
-                                                        alt={d.name} 
+                                                    <img
+                                                        className="h-full w-full object-cover"
+                                                        src={d.images[0] || 'https://via.placeholder.com/50'}
+                                                        alt={d.name}
                                                     />
                                                 </div>
                                             </td>
@@ -149,28 +198,32 @@ const Products = () => {
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm text-gray-300">{d.stock}</div>
                                             </td>
+                                            {/* NEW STATUS CELL */}
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                {getStatusBadge(d.status || 'pending', d.rejectionReason)}
+                                            </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right">
                                                 <div className="flex justify-end gap-2">
-                                                    <Link 
+                                                    <Link
                                                         to={`/seller/dashboard/edit-product/${d._id}`}
                                                         className="p-2 bg-indigo-900/30 hover:bg-indigo-800/50 rounded-lg text-indigo-300 hover:text-white transition-colors"
                                                         title="Edit"
                                                     >
                                                         <FaEdit />
                                                     </Link>
-                                                    <Link 
+                                                    <Link
                                                         className="p-2 bg-emerald-900/30 hover:bg-emerald-800/50 rounded-lg text-emerald-300 hover:text-white transition-colors"
                                                         title="View"
                                                     >
                                                         <FaEye />
                                                     </Link>
-                                                    <button 
+                                                    <button
                                                         className="p-2 bg-red-900/30 hover:bg-red-800/50 rounded-lg text-red-300 hover:text-white transition-colors"
                                                         title="Delete"
                                                     >
                                                         <FaTrash />
                                                     </button>
-                                                    <Link 
+                                                    <Link
                                                         to={`/seller/dashboard/add-banner/${d._id}`}
                                                         className="p-2 bg-cyan-900/30 hover:bg-cyan-800/50 rounded-lg text-cyan-300 hover:text-white transition-colors"
                                                         title="Add Banner"
@@ -183,7 +236,7 @@ const Products = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="8" className="px-6 py-12 text-center">
+                                        <td colSpan="9" className="px-6 py-12 text-center">
                                             <div className="text-gray-500">
                                                 <div className="flex justify-center mb-4">
                                                     <div className="bg-gray-800 p-4 rounded-full">
@@ -194,7 +247,7 @@ const Products = () => {
                                                 </div>
                                                 <p className="text-gray-400 text-lg">No products found</p>
                                                 <p className="text-sm mt-2 text-gray-500">Try adding a new product or adjusting your search</p>
-                                                <Link 
+                                                <Link
                                                     to="/seller/dashboard/add-product"
                                                     className="mt-4 inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg px-4 py-2.5 transition-all shadow-lg"
                                                 >
@@ -207,7 +260,7 @@ const Products = () => {
                             </tbody>
                         </table>
                     </div>
-                    
+
                     {/* Pagination */}
                     {totalProduct > parPage && (
                         <div className="px-6 py-4 bg-gray-800/30 border-t border-gray-700">

@@ -30,6 +30,13 @@ export const allNav = [
     },
     {
         id: 3,
+        title: 'Product Verification',
+        icon: < CategoryIcon/>,
+        role: 'admin',
+        path: '/admin/dashboard/product-verification'
+    },
+    {
+        id: 3,
         title: 'Category',
         icon: < CategoryIcon/>,
         role: 'admin',
@@ -131,13 +138,13 @@ export const allNav = [
         role: 'seller',
         path: '/seller/dashboard/payments'
     },
-    // {
-    //     id: 15,
-    //     title: 'Chat Customer',
-    //     icon: <QuestionAnswerIcon />,
-    //     role: 'seller',
-    //     path: '/seller/dashboard/chat-customer'
-    // },
+    {
+        id: 15,
+        title: 'Chat Customer',
+        icon: <QuestionAnswerIcon />,
+        role: 'seller',
+        path: '/seller/dashboard/chat-customer'
+    },
     {
         id: 16,
         title: 'Chat Support',

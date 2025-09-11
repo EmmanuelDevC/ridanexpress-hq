@@ -16,6 +16,6 @@ const rootReducer = {
     order: OrderReducer,
     payment: PaymentReducer,
     dashboardIndex: dashboardIndexReducer,
-    banner : bannerReducer
+    banner: bannerReducer
 }
 export default rootReducer

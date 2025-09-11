@@ -1,4 +1,3 @@
-// src/api/authApi.js
 import api from './api';
 
 export const verifyToken = async (token) => {

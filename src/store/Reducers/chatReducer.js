@@ -158,7 +158,17 @@ export const chatReducer = createSlice({
             state.successMessage = ""
         },
         updateMessage: (state, { payload }) => {
-            state.messages = [...state.messages, payload]
+            // Check if message already exists to prevent duplicates
+            const messageExists = state.messages.some(msg =>
+                msg._id === payload._id ||
+                (msg.senderId === payload.senderId &&
+                    msg.receiverId === payload.receiverId &&
+                    msg.createdAt === payload.createdAt)
+            );
+
+            if (!messageExists) {
+                state.messages = [...state.messages, payload];
+            }
         },
         updateCustomer: (state, { payload }) => {
             state.activeCustomer = payload

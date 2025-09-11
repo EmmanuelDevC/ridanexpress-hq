@@ -114,7 +114,7 @@ export const create_flutterwave_subaccount = createAsyncThunk(
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(
-                error.response?.data || { message: 'Activation failed' }
+                error.response?.data || { message: 'Activation failed please try again later' }
             );
         }
     }
