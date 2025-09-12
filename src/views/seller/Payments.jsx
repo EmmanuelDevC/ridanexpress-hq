@@ -119,98 +119,98 @@ const Payments = () => {
     };
 
     return (
-        <div className='px-4 md:px-8 py-6 bg-gray-900 min-h-screen'>
+        <div className='px-2 sm:px-4 md:px-6 py-4 bg-gray-900 min-h-screen'>
             <div className='max-w-7xl mx-auto'>
-                <div className='mb-8'>
-                    <h1 className='text-2xl md:text-3xl font-bold text-white flex items-center'>
-                        <FiCreditCard className='mr-3 text-indigo-400' />
+                <div className='mb-6 sm:mb-8'>
+                    <h1 className='text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-center'>
+                        <FiCreditCard className='mr-2 sm:mr-3 text-indigo-400 text-lg sm:text-xl' />
                         Payment Dashboard
                     </h1>
-                    <p className='text-gray-400 mt-2'>
+                    <p className='text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base'>
                         Manage your earnings and withdrawal requests
                     </p>
                 </div>
 
                 {/* Stats Cards */}
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8'>
-                    <div className='bg-gradient-to-br from-gray-800 to-gray-850 rounded-xl p-6 border border-gray-700 shadow-lg'>
+                <div className='grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8'>
+                    <div className='bg-gradient-to-br from-gray-800 to-gray-850 rounded-xl p-4 sm:p-5 border border-gray-700 shadow-lg'>
                         <div className='flex justify-between items-start'>
                             <div>
-                                <h3 className='text-gray-400 text-sm font-medium mb-1'>Total Sales</h3>
-                                <p className='text-2xl font-bold text-white'>{formatCurrency(totalAmount)}</p>
+                                <h3 className='text-gray-400 text-xs sm:text-sm font-medium mb-1'>Total Sales</h3>
+                                <p className='text-lg sm:text-xl md:text-2xl font-bold text-white'>{formatCurrency(totalAmount)}</p>
                             </div>
-                            <div className='bg-indigo-500/10 p-3 rounded-lg'>
-                                <BsCurrencyDollar className='text-indigo-400 text-xl' />
+                            <div className='bg-indigo-500/10 p-2 sm:p-3 rounded-lg'>
+                                <BsCurrencyDollar className='text-indigo-400 text-lg sm:text-xl' />
                             </div>
                         </div>
-                        <div className='mt-4 pt-4 border-t border-gray-700'>
+                        <div className='mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-700'>
                             <p className='text-xs text-gray-400'>All-time earnings</p>
                         </div>
                     </div>
 
-                    <div className='bg-gradient-to-br from-gray-800 to-gray-850 rounded-xl p-6 border border-gray-700 shadow-lg'>
+                    <div className='bg-gradient-to-br from-gray-800 to-gray-850 rounded-xl p-4 sm:p-5 border border-gray-700 shadow-lg'>
                         <div className='flex justify-between items-start'>
                             <div>
-                                <h3 className='text-gray-400 text-sm font-medium mb-1'>Available Amount</h3>
-                                <p className='text-2xl font-bold text-white'>{formatCurrency(availableAmount)}</p>
+                                <h3 className='text-gray-400 text-xs sm:text-sm font-medium mb-1'>Available Amount</h3>
+                                <p className='text-lg sm:text-xl md:text-2xl font-bold text-white'>{formatCurrency(availableAmount)}</p>
                             </div>
-                            <div className='bg-green-500/10 p-3 rounded-lg'>
-                                <BsCurrencyDollar className='text-green-400 text-xl' />
+                            <div className='bg-green-500/10 p-2 sm:p-3 rounded-lg'>
+                                <BsCurrencyDollar className='text-green-400 text-lg sm:text-xl' />
                             </div>
                         </div>
-                        <div className='mt-4 pt-4 border-t border-gray-700'>
+                        <div className='mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-700'>
                             <p className='text-xs text-gray-400'>Ready for withdrawal</p>
                         </div>
                     </div>
 
-                    <div className='bg-gradient-to-br from-gray-800 to-gray-850 rounded-xl p-6 border border-gray-700 shadow-lg'>
+                    <div className='bg-gradient-to-br from-gray-800 to-gray-850 rounded-xl p-4 sm:p-5 border border-gray-700 shadow-lg'>
                         <div className='flex justify-between items-start'>
                             <div>
-                                <h3 className='text-gray-400 text-sm font-medium mb-1'>Withdrawn</h3>
-                                <p className='text-2xl font-bold text-white'>{formatCurrency(withdrowAmount)}</p>
+                                <h3 className='text-gray-400 text-xs sm:text-sm font-medium mb-1'>Withdrawn</h3>
+                                <p className='text-lg sm:text-xl md:text-2xl font-bold text-white'>{formatCurrency(withdrowAmount)}</p>
                             </div>
-                            <div className='bg-blue-500/10 p-3 rounded-lg'>
-                                <BsCurrencyDollar className='text-blue-400 text-xl' />
+                            <div className='bg-blue-500/10 p-2 sm:p-3 rounded-lg'>
+                                <BsCurrencyDollar className='text-blue-400 text-lg sm:text-xl' />
                             </div>
                         </div>
-                        <div className='mt-4 pt-4 border-t border-gray-700'>
+                        <div className='mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-700'>
                             <p className='text-xs text-gray-400'>Total funds transferred</p>
                         </div>
                     </div>
 
-                    <div className='bg-gradient-to-br from-gray-800 to-gray-850 rounded-xl p-6 border border-gray-700 shadow-lg'>
+                    <div className='bg-gradient-to-br from-gray-800 to-gray-850 rounded-xl p-4 sm:p-5 border border-gray-700 shadow-lg'>
                         <div className='flex justify-between items-start'>
                             <div>
-                                <h3 className='text-gray-400 text-sm font-medium mb-1'>Pending</h3>
-                                <p className='text-2xl font-bold text-white'>{formatCurrency(pendingAmount)}</p>
+                                <h3 className='text-gray-400 text-xs sm:text-sm font-medium mb-1'>Pending</h3>
+                                <p className='text-lg sm:text-xl md:text-2xl font-bold text-white'>{formatCurrency(pendingAmount)}</p>
                             </div>
-                            <div className='bg-yellow-500/10 p-3 rounded-lg'>
-                                <BsCurrencyDollar className='text-yellow-400 text-xl' />
+                            <div className='bg-yellow-500/10 p-2 sm:p-3 rounded-lg'>
+                                <BsCurrencyDollar className='text-yellow-400 text-lg sm:text-xl' />
                             </div>
                         </div>
-                        <div className='mt-4 pt-4 border-t border-gray-700'>
+                        <div className='mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-700'>
                             <p className='text-xs text-gray-400'>Awaiting processing</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Main Content */}
-                <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+                <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
                     {/* Left Column - Withdrawal Form */}
-                    <div className='bg-gradient-to-b from-gray-800 to-gray-850 rounded-xl p-6 border border-gray-700 shadow-lg'>
-                        <div className='mb-6'>
-                            <h2 className='text-xl font-semibold text-white flex items-center'>
+                    <div className='bg-gradient-to-b from-gray-800 to-gray-850 rounded-xl p-4 sm:p-5 md:p-6 border border-gray-700 shadow-lg'>
+                        <div className='mb-4 sm:mb-6'>
+                            <h2 className='text-lg sm:text-xl font-semibold text-white flex items-center'>
                                 <FiSend className='mr-2 text-indigo-400' />
                                 Withdrawal Request
                             </h2>
-                            <p className='text-gray-400 text-sm mt-1'>
+                            <p className='text-gray-400 text-xs sm:text-sm mt-1'>
                                 Transfer funds to your bank account
                             </p>
                         </div>
 
-                        <form onSubmit={sendRequest} className='space-y-6'>
+                        <form onSubmit={sendRequest} className='space-y-4 sm:space-y-6'>
                             <div>
-                                <label className='block text-gray-300 text-sm font-medium mb-2'>
+                                <label className='block text-gray-300 text-xs sm:text-sm font-medium mb-2'>
                                     Amount (Available: <span className='text-green-400'>{formatCurrency(availableAmount)}</span>)
                                 </label>
                                 <div className='relative'>
@@ -220,10 +220,10 @@ const Payments = () => {
                                     <input
                                         onChange={(e) => setAmount(e.target.value)}
                                         value={amount}
-                                        min="100"
+                                        min="1000"
                                         step="1"
                                         type="number"
-                                        className='w-full pl-8 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 outline-none transition text-white placeholder-gray-500'
+                                        className='w-full pl-8 pr-4 py-2.5 sm:py-3 bg-gray-700 border border-gray-600 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 outline-none transition text-white placeholder-gray-500 text-sm sm:text-base'
                                         placeholder='Enter amount'
                                         required
                                     />
@@ -235,12 +235,12 @@ const Payments = () => {
 
                             <button
                                 disabled={loader}
-                                className={`w-full flex justify-center items-center py-3.5 px-6 bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-lg text-white font-medium hover:opacity-90 transition-opacity ${loader ? 'opacity-80' : ''
+                                className={`w-full flex justify-center items-center py-2.5 sm:py-3 px-4 sm:px-6 bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-lg text-white font-medium hover:opacity-90 transition-opacity text-sm sm:text-base ${loader ? 'opacity-80' : ''
                                     }`}
                             >
                                 {loader ? (
                                     <>
-                                        <BsArrowRepeat className="animate-spin mr-2" />
+                                        <BsArrowRepeat className="animate-spin mr-2 text-sm" />
                                         Processing...
                                     </>
                                 ) : (
@@ -249,29 +249,29 @@ const Payments = () => {
                             </button>
                         </form>
 
-                        <div className='mt-8'>
-                            <div className='flex justify-between items-center mb-4'>
-                                <h3 className='text-lg font-semibold text-white flex items-center'>
-                                    <BsClockHistory className='mr-2 text-yellow-400' />
+                        <div className='mt-6 sm:mt-8'>
+                            <div className='flex justify-between items-center mb-3 sm:mb-4'>
+                                <h3 className='text-base sm:text-lg font-semibold text-white flex items-center'>
+                                    <BsClockHistory className='mr-2 text-yellow-400 text-sm sm:text-base' />
                                     Pending Requests
                                 </h3>
-                                <span className='bg-gray-700 text-gray-300 text-xs px-2.5 py-1 rounded-full'>
+                                <span className='bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded-full'>
                                     {pendingWithdrows.length} requests
                                 </span>
                             </div>
 
                             <div className='bg-gray-800 rounded-lg border border-gray-700 overflow-hidden'>
-                                <div className='flex bg-gray-700 text-gray-300 text-sm font-medium'>
-                                    <div className='w-[25%] p-3'>ID</div>
-                                    <div className='w-[25%] p-3'>Amount</div>
-                                    <div className='w-[25%] p-3'>Status</div>
-                                    <div className='w-[25%] p-3'>Date</div>
+                                <div className='hidden sm:flex bg-gray-700 text-gray-300 text-xs sm:text-sm font-medium'>
+                                    <div className='w-[25%] p-2 sm:p-3'>ID</div>
+                                    <div className='w-[25%] p-2 sm:p-3'>Amount</div>
+                                    <div className='w-[25%] p-2 sm:p-3'>Status</div>
+                                    <div className='w-[25%] p-2 sm:p-3'>Date</div>
                                 </div>
-                                <div className='max-h-[350px] overflow-y-auto'>
+                                <div className='max-h-[300px] sm:max-h-[350px] overflow-y-auto'>
                                     <List
-                                        height={350}
+                                        height={300}
                                         itemCount={pendingWithdrows.length}
-                                        itemSize={60}
+                                        itemSize={50}
                                         width="100%"
                                         outerElementType={outerElementType}
                                     >
@@ -280,7 +280,7 @@ const Payments = () => {
                                 </div>
 
                                 {pendingWithdrows.length === 0 && (
-                                    <div className='text-center py-10 text-gray-500'>
+                                    <div className='text-center py-6 sm:py-8 text-gray-500 text-sm'>
                                         No pending withdrawal requests
                                     </div>
                                 )}
@@ -289,29 +289,29 @@ const Payments = () => {
                     </div>
 
                     {/* Right Column - Completed Withdrawals */}
-                    <div className='bg-gradient-to-b from-gray-800 to-gray-850 rounded-xl p-6 border border-gray-700 shadow-lg'>
-                        <div className='flex justify-between items-center mb-4'>
-                            <h3 className='text-lg font-semibold text-white flex items-center'>
-                                <BsCheckCircle className='mr-2 text-green-400' />
+                    <div className='bg-gradient-to-b from-gray-800 to-gray-850 rounded-xl p-4 sm:p-5 md:p-6 border border-gray-700 shadow-lg'>
+                        <div className='flex justify-between items-center mb-3 sm:mb-4'>
+                            <h3 className='text-base sm:text-lg font-semibold text-white flex items-center'>
+                                <BsCheckCircle className='mr-2 text-green-400 text-sm sm:text-base' />
                                 Completed Withdrawals
                             </h3>
-                            <span className='bg-gray-700 text-gray-300 text-xs px-2.5 py-1 rounded-full'>
+                            <span className='bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded-full'>
                                 {successWithdrows.length} transactions
                             </span>
                         </div>
 
                         <div className='bg-gray-800 rounded-lg border border-gray-700 overflow-hidden'>
-                            <div className='flex bg-gray-700 text-gray-300 text-sm font-medium'>
-                                <div className='w-[25%] p-3'>ID</div>
-                                <div className='w-[25%] p-3'>Amount</div>
-                                <div className='w-[25%] p-3'>Status</div>
-                                <div className='w-[25%] p-3'>Date</div>
+                            <div className='hidden sm:flex bg-gray-700 text-gray-300 text-xs sm:text-sm font-medium'>
+                                <div className='w-[25%] p-2 sm:p-3'>ID</div>
+                                <div className='w-[25%] p-2 sm:p-3'>Amount</div>
+                                <div className='w-[25%] p-2 sm:p-3'>Status</div>
+                                <div className='w-[25%] p-2 sm:p-3'>Date</div>
                             </div>
-                            <div className='max-h-[350px] overflow-y-auto'>
+                            <div className='max-h-[300px] sm:max-h-[350px] overflow-y-auto'>
                                 <List
-                                    height={350}
+                                    height={300}
                                     itemCount={successWithdrows.length}
-                                    itemSize={60}
+                                    itemSize={50}
                                     width="100%"
                                     outerElementType={outerElementType}
                                 >
@@ -320,28 +320,28 @@ const Payments = () => {
                             </div>
 
                             {successWithdrows.length === 0 && (
-                                <div className='text-center py-10 text-gray-500'>
+                                <div className='text-center py-6 sm:py-8 text-gray-500 text-sm'>
                                     No completed withdrawals yet
                                 </div>
                             )}
                         </div>
 
-                        <div className='mt-8 bg-indigo-900/20 border border-indigo-800 rounded-xl p-5'>
-                            <h4 className='text-indigo-300 font-medium flex items-center mb-2'>
-                                <FiCreditCard className='mr-2' />
+                        <div className='mt-6 sm:mt-8 bg-indigo-900/20 border border-indigo-800 rounded-xl p-3 sm:p-4'>
+                            <h4 className='text-indigo-300 font-medium flex items-center mb-2 text-sm sm:text-base'>
+                                <FiCreditCard className='mr-2 text-sm' />
                                 Payment Information
                             </h4>
-                            <p className='text-gray-400 text-sm mb-3'>
+                            <p className='text-gray-400 text-xs sm:text-sm mb-2 sm:mb-3'>
                                 Funds are transferred to your bank account via secure payment processing.
                             </p>
-                            <ul className='text-gray-400 text-sm space-y-1'>
+                            <ul className='text-gray-400 text-xs sm:text-sm space-y-1'>
                                 <li className='flex items-start'>
                                     <span className='text-green-400 mr-2'>•</span>
                                     Transfers take 1-3 business days
                                 </li>
                                 <li className='flex items-start'>
                                     <span className='text-green-400 mr-2'>•</span>
-                                    Minimum withdrawal amount: ₦10,000
+                                    Minimum withdrawal amount: ₦100
                                 </li>
                                 <li className='flex items-start'>
                                     <span className='text-green-400 mr-2'>•</span>

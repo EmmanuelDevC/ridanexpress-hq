@@ -141,10 +141,28 @@ const SellerDashboard = () => {
             responsive: [{
                 breakpoint: 640,
                 options: {
-                    chart: { height: 300 },
+                    chart: { 
+                        height: 250,
+                        width: '100%'
+                    },
                     legend: {
                         position: 'bottom',
-                        horizontalAlign: 'center'
+                        horizontalAlign: 'center',
+                        fontSize: '12px'
+                    },
+                    xaxis: {
+                        labels: {
+                            style: {
+                                fontSize: '10px'
+                            }
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            style: {
+                                fontSize: '10px'
+                            }
+                        }
                     }
                 }
             }]
@@ -152,35 +170,35 @@ const SellerDashboard = () => {
     }
 
     return (
-        <div className='px-4 lg:px-8 pb-6 bg-gradient-to-br from-gray-900 to-slate-900 min-h-screen'>
+        <div className='px-2 sm:px-4 lg:px-6 pb-4 bg-gradient-to-br from-gray-900 to-slate-900 min-h-screen'>
             {/* Profile Header */}
-            <div className='pt-6 pb-4'>
-                <div className='bg-gradient-to-r from-indigo-900/50 to-purple-900/50 rounded-2xl p-6 shadow-xl border border-slate-700'>
-                    <div className='flex flex-col sm:flex-row items-center gap-6'>
+            <div className='pt-4 pb-2'>
+                <div className='bg-gradient-to-r from-indigo-900/50 to-purple-900/50 rounded-xl sm:rounded-2xl p-4 shadow-xl border border-slate-700'>
+                    <div className='flex flex-col sm:flex-row items-center gap-4'>
                         <div className='relative'>
-                            <div className='relative w-16 h-16 rounded-full overflow-hidden border-2 border-indigo-500'>
+                            <div className='relative w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 border-indigo-500'>
                                 <img
                                     className='w-full h-full object-cover'
                                     src={userInfo.image || customer}
                                     alt="Profile"
                                 />
-                                <div className='absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-slate-900'></div>
+                                <div className='absolute bottom-0 right-0 w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-emerald-500 border-2 border-slate-900'></div>
                             </div>
                         </div>
                         <div className='flex-1 text-center sm:text-left'>
-                            <h1 className='text-xl lg:text-2xl font-bold text-white'>
+                            <h1 className='text-lg sm:text-xl lg:text-2xl font-bold text-white'>
                                 Welcome back, {userInfo.name}
                             </h1>
-                            <p className='text-slate-400 text-sm mt-1'>
+                            <p className='text-slate-400 text-xs sm:text-sm mt-1'>
                                 {userInfo.role === 'admin'
                                     ? 'Administrator Dashboard'
                                     : 'Seller Dashboard'
                                 }
                             </p>
                         </div>
-                        <div className='flex items-center gap-2 bg-indigo-600/20 px-4 py-2 rounded-full text-indigo-400'>
-                            <VerifiedTwoToneIcon className="text-indigo-400" />
-                            <span className='text-sm font-medium'>
+                        <div className='flex items-center gap-1 bg-indigo-600/20 px-3 py-1.5 rounded-full text-indigo-400 text-xs sm:text-sm'>
+                            <VerifiedTwoToneIcon className="text-indigo-400 text-sm sm:text-base" />
+                            <span className='font-medium'>
                                 {userInfo.role === 'admin' ? 'Admin' : 'Verified Seller'}
                             </span>
                         </div>
@@ -189,50 +207,50 @@ const SellerDashboard = () => {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 xs:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-3">
                 {[
                     {
                         title: 'Total Income',
                         value: `₦${availableAmount}`,
-                        icon: <AssuredWorkloadSharpIcon className="text-2xl" />,
+                        icon: <AssuredWorkloadSharpIcon className="text-lg sm:text-xl" />,
                         color: 'bg-gradient-to-br from-emerald-600 to-teal-500',
                         trend: '+24%'
                     },
                     {
                         title: 'All Products',
                         value: totalProduct,
-                        icon: <CategorySharpIcon className="text-2xl" />,
+                        icon: <CategorySharpIcon className="text-lg sm:text-xl" />,
                         color: 'bg-gradient-to-br from-amber-600 to-orange-500',
                         trend: '+12%'
                     },
                     {
                         title: 'Total Orders',
                         value: totalOrder,
-                        icon: <LocalMallSharpIcon className="text-2xl" />,
+                        icon: <LocalMallSharpIcon className="text-lg sm:text-xl" />,
                         color: 'bg-gradient-to-br from-orange-600 to-amber-500',
                         trend: '+8%'
                     },
                     {
                         title: 'Pending Orders',
                         value: totalPendingOrder,
-                        icon: <PendingActionsSharpIcon className="text-2xl" />,
+                        icon: <PendingActionsSharpIcon className="text-lg sm:text-xl" />,
                         color: 'bg-gradient-to-br from-indigo-600 to-purple-500',
                         trend: '+3%'
                     }
                 ].map((card, index) => (
-                    <div key={index} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 p-5 rounded-2xl border border-slate-700 hover:border-indigo-500 transition-all shadow-lg hover:shadow-indigo-500/20">
-                        <div className="flex items-center justify-between mb-3">
-                            <p className="text-sm text-slate-400">{card.title}</p>
-                            <div className={`${card.color} w-10 h-10 rounded-lg flex items-center justify-center shadow-md`}>
+                    <div key={index} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 p-3 sm:p-4 rounded-xl border border-slate-700 hover:border-indigo-500 transition-all shadow-lg hover:shadow-indigo-500/20">
+                        <div className="flex items-center justify-between mb-2">
+                            <p className="text-xs sm:text-sm text-slate-400">{card.title}</p>
+                            <div className={`${card.color} w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shadow-md`}>
                                 {card.icon}
                             </div>
                         </div>
                         <div className="flex items-end justify-between">
-                            <p className="text-xl md:text-2xl font-bold text-white">
+                            <p className="text-base sm:text-lg md:text-xl font-bold text-white">
                                 {formatNumber(card.value)}
                             </p>
                             <span className={`text-xs ${card.trend.includes('+') ? 'text-emerald-400' : 'text-rose-400'} flex items-center gap-1`}>
-                                <span className={`inline-block w-0 h-0 border-x-4 border-x-transparent ${card.trend.includes('+') ? 'border-b-[6px] border-b-emerald-400' : 'border-t-[6px] border-t-rose-400'}`}></span>
+                                <span className={`inline-block w-0 h-0 border-x-3 border-x-transparent ${card.trend.includes('+') ? 'border-b-[5px] border-b-emerald-400' : 'border-t-[5px] border-t-rose-400'}`}></span>
                                 {card.trend}
                             </span>
                         </div>
@@ -241,16 +259,16 @@ const SellerDashboard = () => {
             </div>
 
             {/* Chart & Messages */}
-            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8'>
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6'>
                 {/* Chart Section */}
-                <div className='bg-gradient-to-br from-slate-800/50 to-slate-900/50 p-4 md:p-6 rounded-2xl border border-slate-700 shadow-xl'>
-                    <div className='flex justify-between items-center mb-4'>
-                        <h2 className='text-lg font-semibold text-white'>Monthly Performance</h2>
+                <div className='bg-gradient-to-br from-slate-800/50 to-slate-900/50 p-3 sm:p-4 md:p-6 rounded-xl border border-slate-700 shadow-xl'>
+                    <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2'>
+                        <h2 className='text-base sm:text-lg font-semibold text-white'>Monthly Performance</h2>
                         <div className='flex gap-2'>
-                            <button className='text-xs px-3 py-1 rounded-lg bg-slate-800/50 text-slate-300 hover:bg-indigo-500/10 hover:text-indigo-400 transition-all'>
+                            <button className='text-xs px-2.5 py-1 rounded-md bg-slate-800/50 text-slate-300 hover:bg-indigo-500/10 hover:text-indigo-400 transition-all'>
                                 Monthly
                             </button>
-                            <button className='text-xs px-3 py-1 rounded-lg bg-slate-800/50 text-slate-300 hover:bg-indigo-500/10 hover:text-indigo-400 transition-all'>
+                            <button className='text-xs px-2.5 py-1 rounded-md bg-slate-800/50 text-slate-300 hover:bg-indigo-500/10 hover:text-indigo-400 transition-all'>
                                 Quarterly
                             </button>
                         </div>
@@ -259,58 +277,59 @@ const SellerDashboard = () => {
                         options={chartState.options}
                         series={chartState.series}
                         type='bar'
-                        height={350}
+                        height={300}
+                        width="100%"
                     />
                 </div>
 
                 {/* Messages Section */}
-                <div className='bg-gradient-to-br from-slate-800/50 to-slate-900/50 p-4 md:p-6 rounded-2xl border border-slate-700 shadow-xl'>
-                    <div className='flex justify-between items-center mb-4'>
-                        <h2 className='text-lg font-semibold text-white'>Recent Messages</h2>
-                        <Link className='text-sm text-indigo-400 hover:text-indigo-300 transition-colors'>View All</Link>
+                <div className='bg-gradient-to-br from-slate-800/50 to-slate-900/50 p-3 sm:p-4 md:p-6 rounded-xl border border-slate-700 shadow-xl'>
+                    <div className='flex justify-between items-center mb-3'>
+                        <h2 className='text-base sm:text-lg font-semibold text-white'>Recent Messages</h2>
+                        <Link className='text-xs sm:text-sm text-indigo-400 hover:text-indigo-300 transition-colors'>View All</Link>
                     </div>
-                    <div className='space-y-4 max-h-[350px] overflow-y-auto custom-scrollbar'>
+                    <div className='space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1'>
                         {recentMessage.map((m, i) => (
-                            <div key={i} className='bg-slate-800/30 p-4 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-all'>
-                                <div className='flex items-start gap-4'>
+                            <div key={i} className='bg-slate-800/30 p-3 rounded-lg border border-slate-700 hover:border-indigo-500/50 transition-all'>
+                                <div className='flex items-start gap-3'>
                                     <div className='relative flex-shrink-0'>
                                         {m.senderId === userInfo._id ? (
-                                            <div className='w-10 h-10 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center'>
-                                                <span className='text-sm font-bold text-indigo-100'>
+                                            <div className='w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center'>
+                                                <span className='text-xs sm:text-sm font-bold text-indigo-100'>
                                                     {userInfo.name[0]}
                                                 </span>
                                             </div>
                                         ) : (
-                                            <div className='w-10 h-10 rounded-full bg-gradient-to-r from-amber-600 to-orange-500 flex items-center justify-center'>
-                                                <img className='w-6 h-6' src={customer} alt="Customer" />
+                                            <div className='w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-amber-600 to-orange-500 flex items-center justify-center'>
+                                                <img className='w-4 h-4 sm:w-5 sm:h-5' src={customer} alt="Customer" />
                                             </div>
                                         )}
-                                        <div className='absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-slate-900'></div>
+                                        <div className='absolute -bottom-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-emerald-500 border-2 border-slate-900'></div>
                                     </div>
                                     <div className='flex-1 min-w-0'>
                                         <div className='flex justify-between items-center mb-1'>
-                                            <span className='text-sm font-medium text-white'>{m.senderName}</span>
+                                            <span className='text-xs sm:text-sm font-medium text-white'>{m.senderName}</span>
                                             <span className='text-xs text-slate-500'>
                                                 {moment(m.createdAt).startOf('hour').fromNow()}
                                             </span>
                                         </div>
-                                        <p className='text-sm text-slate-400 bg-slate-800/50 p-3 rounded-lg'>
-                                            {m.message.length > 80 ? m.message.substring(0, 80) + '...' : m.message}
+                                        <p className='text-xs sm:text-sm text-slate-400 bg-slate-800/50 p-2 rounded-md'>
+                                            {m.message.length > 60 ? m.message.substring(0, 60) + '...' : m.message}
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         ))}
                         {recentMessage.length === 0 && (
-                            <div className='text-center py-8'>
-                                <div className='inline-block p-4 rounded-full bg-slate-800/50 mb-3'>
-                                    <div className='w-12 h-12 rounded-full bg-gradient-to-r from-indigo-700/30 to-purple-700/30 flex items-center justify-center'>
-                                        <svg className="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <div className='text-center py-6'>
+                                <div className='inline-block p-3 rounded-full bg-slate-800/50 mb-2'>
+                                    <div className='w-10 h-10 rounded-full bg-gradient-to-r from-indigo-700/30 to-purple-700/30 flex items-center justify-center'>
+                                        <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
                                         </svg>
                                     </div>
                                 </div>
-                                <p className='text-slate-400'>No messages yet</p>
+                                <p className='text-slate-400 text-sm'>No messages yet</p>
                             </div>
                         )}
                     </div>
@@ -318,27 +337,27 @@ const SellerDashboard = () => {
             </div>
 
             {/* Recent Orders */}
-            <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl border border-slate-700 shadow-xl overflow-hidden">
-                <div className="p-4 md:p-6 border-b border-slate-700 flex justify-between items-center">
-                    <h2 className="text-lg font-semibold text-white">Recent Orders</h2>
+            <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-xl border border-slate-700 shadow-xl overflow-hidden">
+                <div className="p-3 sm:p-4 md:p-6 border-b border-slate-700 flex justify-between items-center">
+                    <h2 className="text-base sm:text-lg font-semibold text-white">Recent Orders</h2>
                     <Link
                         to="/seller/dashboard/orders"
-                        className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1"
+                        className="text-xs sm:text-sm text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1"
                     >
                         View All
-                        <FiArrowUpRight />
+                        <FiArrowUpRight className="text-xs" />
                     </Link>
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className="w-full min-w-[600px]">
+                    <table className="w-full min-w-[500px]">
                         <thead className="bg-slate-800/30">
                             <tr>
-                                <th className="px-4 md:px-6 py-3 text-left text-xs md:text-sm font-medium text-indigo-400">Order ID</th>
-                                <th className="px-4 md:px-6 py-3 text-right text-xs md:text-sm font-medium text-indigo-400">Amount</th>
-                                <th className="px-4 md:px-6 py-3 text-center text-xs md:text-sm font-medium text-indigo-400 hidden sm:table-cell">Payment</th>
-                                <th className="px-4 md:px-6 py-3 text-center text-xs md:text-sm font-medium text-indigo-400">Status</th>
-                                <th className="px-4 md:px-6 py-3 text-right text-xs md:text-sm font-medium text-indigo-400">Actions</th>
+                                <th className="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-indigo-400">Order ID</th>
+                                <th className="px-3 py-2 sm:px-4 sm:py-3 text-right text-xs font-medium text-indigo-400">Amount</th>
+                                <th className="px-3 py-2 sm:px-4 sm:py-3 text-center text-xs font-medium text-indigo-400 hidden xs:table-cell">Payment</th>
+                                <th className="px-3 py-2 sm:px-4 sm:py-3 text-center text-xs font-medium text-indigo-400">Status</th>
+                                <th className="px-3 py-2 sm:px-4 sm:py-3 text-right text-xs font-medium text-indigo-400">Actions</th>
                             </tr>
                         </thead>
 
@@ -346,51 +365,51 @@ const SellerDashboard = () => {
                             {recentOrders.length > 0 ? (
                                 recentOrders.map((d, i) => (
                                     <tr key={i} className="hover:bg-slate-800/10 transition-colors">
-                                        <td className="px-4 md:px-6 py-4">
+                                        <td className="px-3 py-2 sm:px-4 sm:py-3">
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-medium text-white">
-                                                    #{d._id.substring(d._id.length - 8)}
+                                                <span className="text-xs sm:text-sm font-medium text-white">
+                                                    #{d._id.substring(d._id.length - 6)}
                                                 </span>
-                                                <span className="text-xs text-slate-500 mt-1">
+                                                <span className="text-xs text-slate-500 mt-0.5">
                                                     {new Date(d.createdAt).toLocaleDateString()}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-4 md:px-6 py-4 text-sm text-slate-300 text-right font-medium">
+                                        <td className="px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm text-slate-300 text-right font-medium">
                                             ${formatNumber(d.price)}
                                         </td>
-                                        <td className="px-4 md:px-6 py-4 hidden sm:table-cell">
-                                            <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${d.payment_status === 'paid'
+                                        <td className="px-3 py-2 sm:px-4 sm:py-3 hidden xs:table-cell">
+                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${d.payment_status === 'paid'
                                                 ? 'bg-emerald-500/20 text-emerald-400'
                                                 : 'bg-amber-500/20 text-amber-400'
                                                 }`}>
                                                 {d.payment_status}
                                             </span>
                                         </td>
-                                        <td className="px-4 md:px-6 py-4">
-                                            <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${d.delivery_status === 'delivered'
+                                        <td className="px-3 py-2 sm:px-4 sm:py-3">
+                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${d.delivery_status === 'delivered'
                                                 ? 'bg-indigo-500/20 text-indigo-400'
                                                 : 'bg-rose-500/20 text-rose-400'
                                                 }`}>
                                                 {d.delivery_status}
                                             </span>
                                         </td>
-                                        <td className="px-4 md:px-6 py-4 text-right">
+                                        <td className="px-3 py-2 sm:px-4 sm:py-3 text-right">
                                             <Link
                                                 to={`/seller/dashboard/order/details/${d._id}`}
-                                                className="inline-flex items-center text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg px-3 py-1.5 text-xs md:text-sm font-medium transition-colors shadow-md hover:shadow-indigo-500/30"
+                                                className="inline-flex items-center text-white bg-indigo-600 hover:bg-indigo-500 rounded-md px-2.5 py-1 text-xs font-medium transition-colors shadow-md hover:shadow-indigo-500/30 whitespace-nowrap"
                                             >
-                                                View Details
+                                                View
                                             </Link>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="5" className='px-4 md:px-6 py-12 text-center'>
+                                    <td colSpan="5" className='px-4 py-8 text-center'>
                                         <div className='flex flex-col items-center justify-center text-gray-500'>
-                                            <LocalMallSharpIcon className='text-4xl mb-3 text-gray-600' />
-                                            <p>No recent orders</p>
+                                            <LocalMallSharpIcon className='text-3xl mb-2 text-gray-600' />
+                                            <p className="text-sm">No recent orders</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -402,7 +421,7 @@ const SellerDashboard = () => {
             
             <style jsx>{`
                 .custom-scrollbar::-webkit-scrollbar {
-                    width: 6px;
+                    width: 4px;
                 }
                 .custom-scrollbar::-webkit-scrollbar-track {
                     background: transparent;

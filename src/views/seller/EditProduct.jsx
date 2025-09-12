@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import { get_category } from '../../store/Reducers/categoryReducer';
 import { get_product, messageClear, update_product, product_image_update } from '../../store/Reducers/productReducer';
 import JoditEditor from 'jodit-react';
-import { FiImage, FiX, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { FiImage, FiX, FiChevronDown, FiChevronUp, FiArrowLeft } from 'react-icons/fi';
 import { overrideStyle } from '../../utils/utils';
 
 const EditProduct = () => {
@@ -134,32 +134,32 @@ const EditProduct = () => {
     }
 
     return (
-        <div className='min-h-screen bg-gradient-to-b from-slate-900 to-gray-900 px-4 lg:px-8 py-8'>
+        <div className='min-h-screen bg-gradient-to-b from-slate-900 to-gray-900 px-2 sm:px-4 lg:px-6 py-4 sm:py-6'>
             <div className='max-w-7xl mx-auto'>
-                <div className='flex justify-between items-center mb-8'>
+                <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4'>
                     <div>
-                        <h1 className='text-2xl lg:text-3xl font-bold text-white mb-2'>
+                        <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-2'>
                             Edit Product
                         </h1>
-                        <p className='text-gray-400'>
+                        <p className='text-gray-400 text-sm sm:text-base'>
                             Update your product details
                         </p>
                     </div>
                     <Link 
-                        className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg px-6 py-2.5 transition-all shadow-lg'
+                        className='flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg px-4 py-2.5 transition-all shadow-lg text-sm sm:text-base'
                         to='/seller/dashboard/products'
                     >
-                        Back to Products
+                        <FiArrowLeft className="text-sm" /> Back to Products
                     </Link>
                 </div>
                 
-                <div className='bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700 shadow-xl p-6'>
+                <div className='bg-gray-800/30 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-gray-700 shadow-xl p-4 sm:p-6'>
                     <form onSubmit={update}>
-                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+                        <div className='grid grid-cols-1 gap-4 sm:gap-6 mb-6'>
                             <div className="relative">
                                 <label className='block text-gray-400 text-sm mb-2' htmlFor="name">Product Name</label>
                                 <input 
-                                    className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white'
+                                    className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white text-sm sm:text-base'
                                     onChange={inputHandle} 
                                     value={state.name} 
                                     type="text" 
@@ -172,7 +172,7 @@ const EditProduct = () => {
                             <div className="relative">
                                 <label className='block text-gray-400 text-sm mb-2' htmlFor="brand">Brand</label>
                                 <input 
-                                    className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white'
+                                    className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white text-sm sm:text-base'
                                     onChange={inputHandle} 
                                     value={state.brand} 
                                     type="text" 
@@ -181,15 +181,13 @@ const EditProduct = () => {
                                     id='brand' 
                                 />
                             </div>
-                        </div>
-                        
-                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+                            
                             <div className="relative">
                                 <label className='block text-gray-400 text-sm mb-2' htmlFor="category">Category</label>
                                 <div className="relative">
                                     <div 
                                         onClick={() => setCateShow(!cateShow)}
-                                        className="flex items-center justify-between w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer text-gray-300"
+                                        className="flex items-center justify-between w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer text-gray-300 text-sm sm:text-base"
                                     >
                                         {category || 'Select a category'}
                                         {cateShow ? <FiChevronUp /> : <FiChevronDown />}
@@ -201,16 +199,16 @@ const EditProduct = () => {
                                                 <input 
                                                     value={searchValue} 
                                                     onChange={categorySearch}
-                                                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white"
+                                                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white text-sm"
                                                     type="text" 
                                                     placeholder='Search categories...' 
                                                 />
                                             </div>
-                                            <div className="max-h-60 overflow-y-auto">
+                                            <div className="max-h-60 overflow-y-auto custom-scrollbar">
                                                 {allCategory.map((c, i) => (
                                                     <div 
                                                         key={i}
-                                                        className={`px-4 py-3 hover:bg-gray-700/50 cursor-pointer ${category === c.name ? 'bg-indigo-900/30' : ''}`}
+                                                        className={`px-4 py-3 hover:bg-gray-700/50 cursor-pointer text-sm ${category === c.name ? 'bg-indigo-900/30' : ''}`}
                                                         onClick={() => {
                                                             setCateShow(false);
                                                             setCategory(c.name);
@@ -229,7 +227,7 @@ const EditProduct = () => {
                             <div className="relative">
                                 <label className='block text-gray-400 text-sm mb-2' htmlFor="stock">Stock Quantity</label>
                                 <input 
-                                    className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white'
+                                    className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white text-sm sm:text-base'
                                     onChange={inputHandle} 
                                     value={state.stock} 
                                     type="number" 
@@ -239,13 +237,11 @@ const EditProduct = () => {
                                     id='stock' 
                                 />
                             </div>
-                        </div>
-                        
-                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+                            
                             <div className="relative">
                                 <label className='block text-gray-400 text-sm mb-2' htmlFor="price">Price ($)</label>
                                 <input 
-                                    className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white'
+                                    className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white text-sm sm:text-base'
                                     onChange={inputHandle} 
                                     value={state.price} 
                                     type="number" 
@@ -258,7 +254,7 @@ const EditProduct = () => {
                             <div className="relative">
                                 <label className='block text-gray-400 text-sm mb-2' htmlFor="discount">Discount (%)</label>
                                 <input 
-                                    className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white'
+                                    className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white text-sm sm:text-base'
                                     onChange={inputHandle} 
                                     value={state.discount} 
                                     type="number" 
@@ -280,7 +276,7 @@ const EditProduct = () => {
                                     config={{
                                         readonly: false,
                                         theme: 'dark',
-                                        height: 400,
+                                        height: 300,
                                         style: {
                                             backgroundColor: '#1f2937',
                                             color: '#f3f4f6'
@@ -293,7 +289,8 @@ const EditProduct = () => {
                                             'image', 'video', 'table', 'link', '|',
                                             'align', 'undo', 'redo', '|',
                                             'hr', 'eraser', 'fullsize'
-                                        ]
+                                        ],
+                                        toolbarAdaptive: true
                                     }}
                                 />
                             </div>
@@ -301,11 +298,11 @@ const EditProduct = () => {
                         
                         <div className='mb-8'>
                             <label className='block text-gray-400 text-sm mb-4'>Product Images</label>
-                            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+                            <div className='grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4'>
                                 {imageShow.map((img, i) => (
                                     <div key={i} className="relative group">
                                         <label 
-                                            className="block h-48 w-full bg-gray-800 border-2 border-dashed border-gray-700 rounded-lg overflow-hidden cursor-pointer hover:border-indigo-500 transition-all"
+                                            className="block h-32 sm:h-40 w-full bg-gray-800 border-2 border-dashed border-gray-700 rounded-lg overflow-hidden cursor-pointer hover:border-indigo-500 transition-all"
                                             htmlFor={`image-${i}`}
                                         >
                                             <img 
@@ -314,8 +311,8 @@ const EditProduct = () => {
                                                 alt={`Product ${i+1}`} 
                                             />
                                             <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <FiImage className="text-2xl text-white" />
-                                                <span className="ml-2 text-white">Change</span>
+                                                <FiImage className="text-lg sm:text-xl text-white" />
+                                                <span className="ml-1 text-white text-xs sm:text-sm">Change</span>
                                             </div>
                                         </label>
                                         <input 
@@ -333,7 +330,7 @@ const EditProduct = () => {
                         <div className='flex justify-end'>
                             <button 
                                 disabled={loader} 
-                                className={`bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg px-8 py-3 font-medium transition-all shadow-lg ${loader ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-indigo-500/30'}`}
+                                className={`w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg px-6 py-3 font-medium transition-all shadow-lg text-sm sm:text-base ${loader ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-indigo-500/30'}`}
                             >
                                 {loader ? (
                                     <PropagateLoader color='#fff' cssOverride={overrideStyle} size={12} />
@@ -343,6 +340,22 @@ const EditProduct = () => {
                     </form>
                 </div>
             </div>
+
+            <style jsx>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: #4b5563;
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: #3b82f6;
+                }
+            `}</style>
         </div>
     );
 };

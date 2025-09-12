@@ -199,51 +199,50 @@ const AddProduct = () => {
     }, [successMessage, errorMessage]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-slate-900 py-8 px-2 sm:px-4">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-slate-900 py-4 px-2 sm:px-4">
             <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mb-3 shadow-lg shadow-indigo-500/25">
-                        <HiOutlineSparkles className="w-5 h-5 text-white" />
+                <div className="text-center mb-6 sm:mb-10">
+                    <div className="inline-flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 shadow-lg shadow-indigo-500/25">
+                        <HiOutlineSparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     </div>
-                    <h1 className="text-2xl md:text-4xl lg:text-3xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent mb-4">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent mb-2 sm:mb-4">
                         Create New Product
                     </h1>
-                    <p className="text-gray-400 text-md max-w-2xl mx-auto mb-8">
+                    <p className="text-gray-400 text-sm sm:text-md max-w-2xl mx-auto mb-4 sm:mb-8">
                         Add a new product to your store with detailed information and specifications
                     </p>
                     <Link
                         to="/seller/dashboard/products"
-                        className="inline-flex text-sm items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 px-6 py-3 rounded-full font-semibold text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105"
+                        className="inline-flex text-xs sm:text-sm items-center gap-1 sm:gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105"
                     >
-                        <HiOutlineCube className=" text-sm rounded-sm w-5 h-5" />
+                        <HiOutlineCube className="text-xs sm:text-sm rounded-sm w-4 h-4 sm:w-5 sm:h-5" />
                         View All Products
                     </Link>
                 </div>
 
-                <div className="bg-gradient-to-br from-gray-800/50 to-slate-800/50 rounded-2xl border border-slate-700 shadow-xl overflow-hidden">
-                    <div className="p-5 md:p-6 border-b border-slate-700">
-                        <h2 className="text-xl font-semibold text-white flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-600 to-blue-600 flex items-center justify-center">
-                                <BsPlusLg className="text-white" />
+                <div className="bg-gradient-to-br from-gray-800/50 to-slate-800/50 rounded-xl sm:rounded-2xl border border-slate-700 shadow-xl overflow-hidden">
+                    <div className="p-4 sm:p-5 md:p-6 border-b border-slate-700">
+                        <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2 sm:gap-3">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-indigo-600 to-blue-600 flex items-center justify-center">
+                                <BsPlusLg className="text-white text-xs sm:text-sm" />
                             </div>
                             Product Information
                         </h2>
-                        <p className="text-gray-400 text-sm mt-2">
+                        <p className="text-gray-400 text-xs sm:text-sm mt-1 sm:mt-2">
                             Fill in all required fields to add a new product
                         </p>
                     </div>
 
-                    <form onSubmit={add} className="p-4 md:p-6">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {/* Left Column */}
-                            <div className="space-y-5">
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-gray-300 font-medium flex items-center gap-2">
+                    <form onSubmit={add} className="p-3 sm:p-4 md:p-6">
+                        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6">
+                            <div className="space-y-4 sm:space-y-5">
+                                <div className="flex flex-col gap-1 sm:gap-2">
+                                    <label className="text-gray-300 py-1 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
                                         Product Name
                                         <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 transition-all"
+                                        className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
                                         onChange={inputHandle}
                                         value={state.name}
                                         type="text"
@@ -254,13 +253,13 @@ const AddProduct = () => {
                                     />
                                 </div>
 
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-gray-300 font-medium flex items-center gap-2">
+                                <div className="flex flex-col gap-1 sm:gap-2">
+                                    <label className="text-gray-300 py-1 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
                                         Product Brand
                                         <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 transition-all"
+                                        className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
                                         onChange={inputHandle}
                                         value={state.brand}
                                         type="text"
@@ -271,14 +270,14 @@ const AddProduct = () => {
                                     />
                                 </div>
 
-                                <div className="flex flex-col gap-2 relative">
-                                    <label className="text-gray-300 font-medium flex items-center gap-2">
+                                <div className="flex flex-col gap-1 sm:gap-2 relative">
+                                    <label className="text-gray-300 py-1 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
                                         Category & Subcategory
                                         <span className="text-red-500">*</span>
                                     </label>
                                     <div
                                         onClick={() => setCateShow(!cateShow)}
-                                        className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 cursor-pointer flex justify-between items-center"
+                                        className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 cursor-pointer flex justify-between items-center text-sm sm:text-base"
                                     >
                                         <span className={category ? 'text-white' : 'text-gray-500'}>
                                             {category
@@ -286,7 +285,7 @@ const AddProduct = () => {
                                                 : "Select category"}
                                         </span>
                                         <svg
-                                            className={`w-4 h-4 text-gray-400 transition-transform ${cateShow ? 'rotate-180' : ''}`}
+                                            className={`w-3 h-3 sm:w-4 sm:h-4 text-gray-400 transition-transform ${cateShow ? 'rotate-180' : ''}`}
                                             fill="none"
                                             stroke="currentColor"
                                             viewBox="0 0 24 24"
@@ -296,19 +295,19 @@ const AddProduct = () => {
                                         </svg>
                                     </div>
                                     <div
-                                        className={`absolute top-full left-0 right-0 mt-2 bg-gray-800 rounded-xl shadow-xl z-10 overflow-hidden transition-all ${cateShow ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
+                                        className={`absolute top-full left-0 right-0 mt-1 sm:mt-2 bg-gray-800 rounded-lg sm:rounded-xl shadow-xl z-10 overflow-hidden transition-all ${cateShow ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
                                     >
-                                        <div className="p-3 border-b border-slate-700">
+                                        <div className="p-2 sm:p-3 border-b border-slate-700">
                                             <input
                                                 value={searchValue}
                                                 onChange={categorySearch}
-                                                className="px-4 py-2 w-full focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-700 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-500 transition-all"
+                                                className="px-3 sm:px-4 py-1.5 sm:py-2 w-full focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-700 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
                                                 type="text"
                                                 placeholder="Search categories..."
                                                 autoFocus
                                             />
                                         </div>
-                                        <div className="max-h-60 overflow-y-auto custom-scrollbar">
+                                        <div className="max-h-48 sm:max-h-60 overflow-y-auto custom-scrollbar">
                                             {allCategory.length > 0 ? (
                                                 allCategory.map((c, i) => (
                                                     <div
@@ -318,7 +317,7 @@ const AddProduct = () => {
                                                         onMouseLeave={() => setHoveredCategory(null)}
                                                     >
                                                         <div
-                                                            className={`px-4 py-3 hover:bg-indigo-900/50 cursor-pointer transition-colors flex justify-between items-center ${category === c.name ? 'bg-indigo-900/30 text-indigo-300' : 'text-gray-300'}`}
+                                                            className={`px-3 sm:px-4 py-2 sm:py-3 hover:bg-indigo-900/50 cursor-pointer transition-colors flex justify-between items-center text-sm sm:text-base ${category === c.name ? 'bg-indigo-900/30 text-indigo-300' : 'text-gray-300'}`}
                                                             onClick={() => {
                                                                 setCategory(c.name);
                                                                 setSubcategory('');
@@ -328,13 +327,13 @@ const AddProduct = () => {
                                                                 }
                                                             }}
                                                         >
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                                                            <div className="flex items-center gap-2 sm:gap-3">
+                                                                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-indigo-500"></div>
                                                                 {c.name}
                                                             </div>
                                                             {c.subcategories?.length > 0 && (
                                                                 <svg
-                                                                    className="w-4 h-4 text-gray-400"
+                                                                    className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400"
                                                                     fill="none"
                                                                     stroke="currentColor"
                                                                     viewBox="0 0 24 24"
@@ -347,12 +346,12 @@ const AddProduct = () => {
 
                                                         {/* Subcategories dropdown */}
                                                         {hoveredCategory === c._id && c.subcategories?.length > 0 && (
-                                                            <div className="absolute left-full top-0 ml-1 w-48 bg-gray-800 border border-slate-700 rounded-lg shadow-lg z-20">
-                                                                <div className="max-h-60 overflow-y-auto custom-scrollbar py-2">
+                                                            <div className="absolute left-full top-0 ml-1 w-40 sm:w-48 bg-gray-800 border border-slate-700 rounded-lg shadow-lg z-20">
+                                                                <div className="max-h-48 sm:max-h-60 overflow-y-auto custom-scrollbar py-1 sm:py-2">
                                                                     {c.subcategories.map((sub, idx) => (
                                                                         <div
                                                                             key={idx}
-                                                                            className={`px-4 py-3 hover:bg-indigo-900/50 cursor-pointer ${subcategory === sub ? 'bg-indigo-900/30 text-indigo-300' : 'text-gray-300'}`}
+                                                                            className={`px-3 sm:px-4 py-2 sm:py-3 hover:bg-indigo-900/50 cursor-pointer text-xs sm:text-sm ${subcategory === sub ? 'bg-indigo-900/30 text-indigo-300' : 'text-gray-300'}`}
                                                                             onClick={(e) => {
                                                                                 e.stopPropagation();
                                                                                 setCategory(c.name);
@@ -369,24 +368,21 @@ const AddProduct = () => {
                                                     </div>
                                                 ))
                                             ) : (
-                                                <div className="px-4 py-4 text-center text-gray-500">
+                                                <div className="px-3 sm:px-4 py-3 sm:py-4 text-center text-gray-500 text-sm">
                                                     No categories found
                                                 </div>
                                             )}
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Right Column */}
-                            <div className="space-y-5">
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-gray-300 font-medium flex items-center gap-2">
+                                <div className="flex flex-col gap-1 sm:gap-2">
+                                    <label className="text-gray-300 py-1 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
                                         Stock Quantity
                                         <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 transition-all"
+                                        className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
                                         onChange={inputHandle}
                                         value={state.stock}
                                         type="number"
@@ -398,13 +394,13 @@ const AddProduct = () => {
                                     />
                                 </div>
 
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-gray-300 font-medium flex items-center gap-2">
+                                <div className="flex flex-col gap-1 sm:gap-2">
+                                    <label className="text-gray-300 py-1 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
                                         Price (₦)
                                         <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 transition-all"
+                                        className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
                                         onChange={inputHandle}
                                         value={state.price}
                                         type="number"
@@ -415,12 +411,12 @@ const AddProduct = () => {
                                     />
                                 </div>
 
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-gray-300 font-medium">Discount (%)</label>
+                                <div className="flex flex-col gap-1 sm:gap-2">
+                                    <label className="text-gray-300 py-1 font-medium text-sm sm:text-base">Discount (%)</label>
                                     <input
                                         min="0"
                                         max="100"
-                                        className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 transition-all"
+                                        className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
                                         onChange={inputHandle}
                                         value={state.discount}
                                         type="number"
@@ -432,55 +428,52 @@ const AddProduct = () => {
                             </div>
                         </div>
 
-                        <div className="mt-8">
-                            <label className="block text-gray-300 font-medium mb-3 flex items-center gap-2">
+                        <div className="mt-6 sm:mt-8">
+                            <label className="block py-1 text-gray-300 font-medium text-sm sm:text-base mb-2 sm:mb-3 flex items-center gap-1 sm:gap-2">
                                 Product Description
                                 <span className="text-red-500">*</span>
                             </label>
-                            <div className="bg-gray-700/70 border border-slate-600 rounded-xl overflow-hidden">
+                            <div className="bg-black border border-slate-600 rounded-lg overflow-hidden">
                                 <JoditEditor
                                     ref={editor}
                                     value={content}
-                                    tabIndex={1}
-                                    onBlur={newContent => setContent(newContent)}
-                                    onChange={newContent => { }}
+                                    onBlur={setContent}
                                     config={{
                                         theme: 'dark',
                                         readonly: false,
-                                        toolbarAdaptive: false,
-                                        toolbarButtonSize: 'medium',
                                         style: {
-                                            color: '#d1d5db',
-                                            background: 'transparent'
-                                        }
+                                            color: '#000',
+                                            background: 'transparent',
+                                        },
                                     }}
                                 />
                             </div>
+
                         </div>
 
                         {/* Category-specific Specifications */}
                         {categorySpecs.length > 0 && (
-                            <div className="mt-8">
-                                <div className="flex justify-between items-center mb-4">
-                                    <label className="block text-gray-300 font-medium flex items-center gap-2">
+                            <div className="mt-6 sm:mt-8">
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2">
+                                    <label className="block text-gray-300 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
                                         Product Specifications
                                         <span className="text-red-500">*</span>
                                     </label>
-                                    <span className="text-sm text-indigo-400">
+                                    <span className="text-xs sm:text-sm text-indigo-400">
                                         {category}{subcategory ? ` > ${subcategory}` : ''}
                                     </span>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 gap-3 sm:gap-4">
                                     {categorySpecs.map((spec, index) => (
-                                        <div key={index} className="flex flex-col gap-2">
-                                            <label className="text-gray-300 font-medium">{spec}</label>
+                                        <div key={index} className="flex flex-col gap-1 sm:gap-2">
+                                            <label className="text-gray-300 font-medium text-sm sm:text-base">{spec}</label>
                                             <input
                                                 type="text"
                                                 value={specifications[spec] || ''}
                                                 onChange={(e) => handleSpecChange(spec, e.target.value)}
                                                 placeholder={`Enter ${spec}`}
-                                                className="px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-xl text-gray-200 placeholder-gray-500 transition-all"
+                                                className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
                                                 required
                                             />
                                         </div>
@@ -489,17 +482,17 @@ const AddProduct = () => {
                             </div>
                         )}
 
-                        <div className="mt-8">
-                            <div className="flex justify-between items-center mb-4">
-                                <label className="block text-gray-300 font-medium flex items-center gap-2">
+                        <div className="mt-6 sm:mt-8">
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2">
+                                <label className="block text-gray-300 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
                                     Product Images
                                     <span className="text-red-500">*</span>
                                 </label>
-                                <span className="text-sm text-gray-500">{images.length}/8 images</span>
+                                <span className="text-xs sm:text-sm text-gray-500">{images.length}/8 images</span>
                             </div>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4">
                                 {imageShow.map((img, i) => (
-                                    <div key={i} className="relative group h-40 md:h-48 rounded-xl overflow-hidden border-2 border-slate-700 hover:border-indigo-500 transition-all">
+                                    <div key={i} className="relative group h-28 sm:h-32 md:h-40 rounded-lg sm:rounded-xl overflow-hidden border-2 border-slate-700 hover:border-indigo-500 transition-all">
                                         <label htmlFor={i} className="block w-full h-full cursor-pointer">
                                             <img
                                                 className="w-full h-full object-cover group-hover:opacity-70 transition-opacity"
@@ -507,7 +500,7 @@ const AddProduct = () => {
                                                 alt="Preview"
                                             />
                                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <span className="text-white text-sm font-medium">Change</span>
+                                                <span className="text-white text-xs font-medium">Change</span>
                                             </div>
                                         </label>
                                         <input
@@ -520,9 +513,9 @@ const AddProduct = () => {
                                         <button
                                             type="button"
                                             onClick={() => removeImage(i)}
-                                            className="absolute top-2 right-2 bg-gray-800/80 p-1.5 rounded-full text-red-400 shadow-md hover:bg-red-500 hover:text-white transition-colors"
+                                            className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-gray-800/80 p-1 rounded-full text-red-400 shadow-md hover:bg-red-500 hover:text-white transition-colors"
                                         >
-                                            <IoCloseSharp className="text-lg" />
+                                            <IoCloseSharp className="text-sm sm:text-base" />
                                         </button>
                                     </div>
                                 ))}
@@ -530,14 +523,14 @@ const AddProduct = () => {
                                 {imageShow.length < 8 && (
                                     <>
                                         <label
-                                            className="flex flex-col justify-center items-center h-40 md:h-48 rounded-xl border-2 border-dashed border-slate-700 bg-gray-700/30 text-gray-400 hover:border-indigo-500 hover:text-indigo-400 transition-all cursor-pointer"
+                                            className="flex flex-col justify-center items-center h-28 sm:h-32 md:h-40 rounded-lg sm:rounded-xl border-2 border-dashed border-slate-700 bg-gray-700/30 text-gray-400 hover:border-indigo-500 hover:text-indigo-400 transition-all cursor-pointer"
                                             htmlFor="image"
                                         >
-                                            <div className="p-3 rounded-full bg-indigo-900/30 text-indigo-400 mb-3">
-                                                <BsUpload className="text-2xl" />
+                                            <div className="p-2 sm:p-3 rounded-full bg-indigo-900/30 text-indigo-400 mb-2 sm:mb-3">
+                                                <BsUpload className="text-lg sm:text-xl" />
                                             </div>
-                                            <span className="font-medium text-center px-2">Upload Images</span>
-                                            <span className="text-xs text-gray-500 mt-1">Max 8 images</span>
+                                            <span className="font-medium text-center px-2 text-xs sm:text-sm">Upload Images</span>
+                                            <span className="text-xs text-gray-500 mt-0.5">Max 8 images</span>
                                         </label>
                                         <input
                                             multiple
@@ -552,19 +545,18 @@ const AddProduct = () => {
                             </div>
                         </div>
 
-                        <div className="mt-10 flex justify-center">
+                        <div className="mt-8 sm:mt-10 flex justify-center">
                             <button
                                 disabled={loader}
-                                className={`w-full max-w-md py-4 px-6 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center ${loader
-                                        ? 'bg-indigo-800'
-                                        : 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 hover:shadow-xl'
+                                className={`w-full max-w-md py-4 sm:py-4 px-4 sm:px-6 rounded-full sm:rounded-xl font-semibold text-white shadow-lg transition-all flex items-center justify-center text-sm sm:text-base ${loader
+                                    ? 'bg-indigo-800'
+                                    : 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 hover:shadow-xl'
                                     }`}
                             >
                                 {loader ? (
                                     <PropagateLoader color="#fff" cssOverride={overrideStyle} />
                                 ) : (
                                     <>
-                                        <BsPlusLg className="mr-2" />
                                         Add Product
                                     </>
                                 )}
@@ -576,7 +568,7 @@ const AddProduct = () => {
 
             <style jsx>{`
                 .custom-scrollbar::-webkit-scrollbar {
-                    width: 6px;
+                    width: 4px;
                 }
                 .custom-scrollbar::-webkit-scrollbar-track {
                     background: transparent;
