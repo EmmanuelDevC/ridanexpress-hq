@@ -8,7 +8,6 @@ import { FaCircle } from 'react-icons/fa'
 
 const Header = ({ showSidebar, setShowSidebar }) => {
     const { userInfo } = useSelector(state => state.auth)
-
     return (
         <div className='w-full sticky top-0 left-0 right-0 z-50 bg-[#161d31] border-b border-slate-700 shadow-xl'>
             <div className='px-4 lg:px-8 h-[70px] ml-0 lg:ml-[260px] flex justify-between items-center transition-all duration-300'>

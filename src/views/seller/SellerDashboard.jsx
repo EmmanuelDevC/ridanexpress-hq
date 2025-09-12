@@ -84,16 +84,16 @@ const SellerDashboard = () => {
                     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 axisBorder: { show: false },
                 axisTicks: { show: false },
-                labels: { 
-                    style: { 
+                labels: {
+                    style: {
                         colors: '#d0d2d6',
                         fontSize: '12px'
-                    } 
+                    }
                 }
             },
             yaxis: {
                 labels: {
-                    style: { 
+                    style: {
                         colors: '#d0d2d6',
                         fontSize: '12px'
                     },
@@ -141,7 +141,7 @@ const SellerDashboard = () => {
             responsive: [{
                 breakpoint: 640,
                 options: {
-                    chart: { 
+                    chart: {
                         height: 250,
                         width: '100%'
                     },
@@ -172,7 +172,7 @@ const SellerDashboard = () => {
     return (
         <div className='px-2 sm:px-4 lg:px-6 pb-4 bg-gradient-to-br from-gray-900 to-slate-900 min-h-screen'>
             {/* Profile Header */}
-            <div className='pt-4 pb-2'>
+            <div className='lg:pt-4 pt-3 pb-2'>
                 <div className='bg-gradient-to-r from-indigo-900/50 to-purple-900/50 rounded-xl sm:rounded-2xl p-4 shadow-xl border border-slate-700'>
                     <div className='flex flex-col sm:flex-row items-center gap-4'>
                         <div className='relative'>
@@ -207,7 +207,7 @@ const SellerDashboard = () => {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-2 xs:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-3">
+            <div className="grid grid-cols-2 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:mb-6 mb-3">
                 {[
                     {
                         title: 'Total Income',
@@ -418,7 +418,7 @@ const SellerDashboard = () => {
                     </table>
                 </div>
             </div>
-            
+
             <style jsx>{`
                 .custom-scrollbar::-webkit-scrollbar {
                     width: 4px;
