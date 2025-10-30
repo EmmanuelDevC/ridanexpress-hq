@@ -32,8 +32,8 @@ export const logout = createAsyncThunk(
     'auth/logout',
     async ({ navigate, role }, { rejectWithValue }) => {
         try {
-            //const { data } = await axios.get('/logout', { withCredentials: true })
-            localStorage.removeItem('accessToken')
+            const { data } = await axios.get('/logout', { withCredentials: true })
+            // localStorage.removeItem('accessToken')
             if (role === 'admin') {
                 navigate('/admin/login')
             } else {
@@ -45,20 +45,31 @@ export const logout = createAsyncThunk(
     }
 )
 
-
 export const seller_register = createAsyncThunk(
     'auth/seller_register',
     async (info, { rejectWithValue, fulfillWithValue, getState }) => {
         try {
-            const { data } = await axios.post(`${api_url}/api/seller-register`, info, { withCredentials: true })
-            localStorage.setItem('accessToken', data.token)
-            return fulfillWithValue(data)
+            console.log('Registering seller with:', info); // Debug log
+            const { data } = await axios.post(`${api_url}/api/seller-register`, info, {
+                withCredentials: true,
+                timeout: 30000 // Add timeout
+            });
+
+            if (data.token) {
+                localStorage.setItem('accessToken', data.token);
+            }
+
+            return fulfillWithValue(data);
         } catch (error) {
-            return rejectWithValue(error.response.data)
+            console.error('Registration error:', error); // Debug log
+            return rejectWithValue(
+                error.response?.data || {
+                    error: error.message || 'Registration failed. Please try again.'
+                }
+            );
         }
     }
-)
-
+);
 
 export const profile_image_upload = createAsyncThunk(
     'auth/profile_image_upload',
@@ -201,23 +212,27 @@ export const authReducer = createSlice({
                 state.userInfo = payload.userInfo;
             }
         },
+        
         [seller_register.pending]: (state, _) => {
-            state.loader = true
+            state.loader = true;
+            state.errorMessage = ''; // Clear previous errors
+            state.successMessage = ''; // Clear previous messages
         },
         [seller_register.rejected]: (state, { payload }) => {
-            state.loader = false
-            state.errorMessage = payload.error
+            state.loader = false;
+            state.errorMessage = payload?.error || payload?.message || 'Registration failed. Please try again.';
         },
         [seller_register.fulfilled]: (state, { payload }) => {
-            state.loader = false
-            state.successMessage = payload.message
-            state.token = payload.token
-            state.role = returnRole(payload.token)
-            // Add this to update user info immediately
+            state.loader = false;
+            state.successMessage = payload.message;
+            state.token = payload.token;
+            state.role = returnRole(payload.token);
+
             if (payload.userInfo) {
                 state.userInfo = payload.userInfo;
             }
         },
+
         [get_user_info.fulfilled]: (state, { payload }) => {
             state.loader = false
             state.userInfo = payload.userInfo

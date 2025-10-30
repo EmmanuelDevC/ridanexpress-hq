@@ -4,16 +4,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios";
 import { api_url } from "../../utils/utils";
 import KwikAcceptModal from "../../views/components/KwikAcceptModal";
+import TrackDelivery from '../../views/components/TrackDelivery'; 
 import toast from "react-hot-toast";
-import { 
-  messageClear, 
-  get_seller_order, 
-  seller_order_status_update 
+import {
+  messageClear,
+  get_seller_order,
+  seller_order_status_update
 } from '../../store/Reducers/OrderReducer';
-import { 
-  FiPackage, 
-  FiCreditCard, 
-  FiTruck, 
+import {
+  FiPackage,
+  FiCreditCard,
+  FiTruck,
   FiMapPin,
   FiClock,
   FiAlertTriangle
@@ -22,13 +23,13 @@ import {
 const OrderDetails = () => {
   const { orderId } = useParams();
   const dispatch = useDispatch();
-  const { 
-    order, 
-    errorMessage, 
-    successMessage 
+  const {
+    order,
+    errorMessage,
+    successMessage
   } = useSelector(state => state.order);
   const { userInfo } = useSelector((state) => state.auth);
-  
+
   // State variables
   const [status, setStatus] = useState('');
   const [showKwikModal, setShowKwikModal] = useState(false);
@@ -36,11 +37,11 @@ const OrderDetails = () => {
   const [showTracking, setShowTracking] = useState(false);
   const [loadingTracking, setLoadingLoading] = useState(false);
   const [sellerProfile, setSellerProfile] = useState(null);
-  
+
   // Environment detection
   const isStaging = api_url.includes("staging") || api_url.includes("test");
   const kwikBaseUrl = "https://staging-api-test.kwik.delivery";
-  
+
   // Status colors mapping
   const statusColors = {
     pending: 'bg-amber-100 text-amber-800',
@@ -77,7 +78,7 @@ const OrderDetails = () => {
         console.error("Failed to fetch seller profile", error);
       }
     };
-    
+
     if (userInfo) {
       fetchSellerProfile();
     }
@@ -112,7 +113,7 @@ const OrderDetails = () => {
         details,
         { withCredentials: true }
       );
-      
+
       dispatch(get_seller_order(orderId));
       toast.success("Kwik rider dispatched successfully!");
     } catch (error) {
@@ -120,9 +121,35 @@ const OrderDetails = () => {
     }
   };
 
+  const acceptWithKwik = async () => {
+    try {
+      const response = await api.put(`/seller/accept-with-kwik/${orderId}`, {
+        weight: packageWeight,
+        pickupAddress: sellerLocation.address,
+        vehicleId: selectedVehicle,
+        isInsured: includeInsurance,
+        instructions: deliveryInstructions
+      });
+
+      if (response.data.success) {
+        setOrder({
+          ...order,
+          delivery: {
+            provider: 'kwik',
+            trackingId: response.data.trackingId,
+            trackingUrl: response.data.trackingUrl,
+            status: 'pending'
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Failed to accept order with Kwik:', error);
+    }
+  };
+
   const fetchTrackingInfo = async () => {
     if (!order?.delivery?.kwikOrderId) return;
-    
+
     setLoadingTracking(true);
     try {
       const response = await axios.get(
@@ -181,7 +208,7 @@ const OrderDetails = () => {
               </p>
             )}
           </div>
-          
+
           <div className="flex items-center gap-3">
             <select
               onChange={status_update}
@@ -223,7 +250,7 @@ const OrderDetails = () => {
                 Kwik Delivery
               </h3>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Status:</p>
@@ -231,26 +258,26 @@ const OrderDetails = () => {
                   {order.delivery.status.replace('_', ' ')}
                 </p>
               </div>
-              
+
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Delivery Fee:</p>
                 <p className="font-medium">₦{order.delivery.fee?.toFixed(2)}</p>
               </div>
-              
+
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Tracking ID:</p>
                 <p className="font-medium">{order.delivery.kwikOrderId}</p>
               </div>
-              
+
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Environment:</p>
                 <p className="font-medium">{isStaging ? 'Staging' : 'Production'}</p>
               </div>
             </div>
-            
+
             {order.delivery.trackingUrl && (
               <div className="mt-4">
-                <a 
+                <a
                   href={order.delivery.trackingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -260,7 +287,7 @@ const OrderDetails = () => {
                 </a>
               </div>
             )}
-            
+
             <div className="mt-6">
               <button
                 onClick={() => setShowTracking(!showTracking)}
@@ -268,7 +295,7 @@ const OrderDetails = () => {
               >
                 {showTracking ? 'Hide Real-time Updates' : 'Show Real-time Updates'}
               </button>
-              
+
               {showTracking && (
                 <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   {loadingTracking ? (
@@ -284,7 +311,7 @@ const OrderDetails = () => {
                           <p>{trackingInfo.last_location || 'In transit'}</p>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-start gap-3">
                         <FiClock className="mt-1 text-blue-500" />
                         <div>
@@ -292,7 +319,7 @@ const OrderDetails = () => {
                           <p>{trackingInfo.eta || 'Calculating...'}</p>
                         </div>
                       </div>
-                      
+
                       {trackingInfo.rider && (
                         <div className="flex items-start gap-3">
                           <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10 flex items-center justify-center">
@@ -314,6 +341,7 @@ const OrderDetails = () => {
                 </div>
               )}
             </div>
+            <TrackDelivery orderId={orderId} />
           </div>
         )}
 

@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { BsImages, BsPlusLg, BsUpload } from 'react-icons/bs';
+import { BsImages, BsPlusLg, BsUpload, BsInfoCircle } from 'react-icons/bs';
 import { IoCloseSharp } from 'react-icons/io5';
 import { useSelector, useDispatch } from 'react-redux';
 import { HiOutlineCube, HiOutlineSparkles } from 'react-icons/hi';
+import { FiPackage, FiDollarSign, FiTag, FiLayers, FiBox, FiPercent } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { PropagateLoader } from 'react-spinners';
 import JoditEditor from 'jodit-react';
@@ -34,7 +35,11 @@ const AddProduct = () => {
         discount: '',
         price: "",
         brand: "",
-        stock: ""
+        stock: "",
+        weight: "",
+        length: "",
+        width: "",
+        height: ""
     });
 
     const inputHandle = (e) => {
@@ -158,6 +163,10 @@ const AddProduct = () => {
         formData.append('description', content);
         formData.append('price', state.price);
         formData.append('stock', state.stock);
+        formData.append('weight', state.weight);
+        formData.append('length', state.length);
+        formData.append('width', state.width);
+        formData.append('height', state.height);
         formData.append('category', category);
         formData.append('subcategory', subcategory);
         formData.append('discount', state.discount);
@@ -186,8 +195,13 @@ const AddProduct = () => {
                 discount: '',
                 price: "",
                 brand: "",
-                stock: ""
+                stock: "",
+                weight: "",
+                length: "",
+                width: "",
+                height: ""
             });
+
             setContent('');
             setImageShow([]);
             setImages([]);
@@ -199,281 +213,389 @@ const AddProduct = () => {
     }, [successMessage, errorMessage]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-slate-900 py-4 px-2 sm:px-4">
-            <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-6 sm:mb-10">
-                    <div className="inline-flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 shadow-lg shadow-indigo-500/25">
-                        <HiOutlineSparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+        <div className="min-h-screen bg-gray-50">
+            {/* Header */}
+            <div className="bg-white border-b border-gray-200">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                        <div>
+                            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Add New Product</h1>
+                            <p className="text-gray-600 mt-2">Create a new product listing for your store</p>
+                        </div>
+                        <Link
+                            to="/seller/dashboard/products"
+                            className="inline-flex items-center gap-2 bg-white border border-gray-300 hover:border-gray-400 text-gray-700 font-medium px-4 py-2.5 rounded-lg transition-colors"
+                        >
+                            <HiOutlineCube className="text-lg" />
+                            View Products
+                        </Link>
                     </div>
-                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent mb-2 sm:mb-4">
-                        Create New Product
-                    </h1>
-                    <p className="text-gray-400 text-sm sm:text-md max-w-2xl mx-auto mb-4 sm:mb-8">
-                        Add a new product to your store with detailed information and specifications
-                    </p>
-                    <Link
-                        to="/seller/dashboard/products"
-                        className="inline-flex text-xs sm:text-sm items-center gap-1 sm:gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105"
-                    >
-                        <HiOutlineCube className="text-xs sm:text-sm rounded-sm w-4 h-4 sm:w-5 sm:h-5" />
-                        View All Products
-                    </Link>
+                </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Progress Steps */}
+                <div className="mb-8">
+                    <div className="flex items-center justify-center space-x-4 mb-4">
+                        {['Basic Info', 'Pricing', 'Media', 'Review'].map((step, index) => (
+                            <div key={step} className="flex items-center">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                                    index === 0 
+                                        ? 'bg-green-500 text-white' 
+                                        : 'bg-gray-200 text-gray-600'
+                                }`}>
+                                    {index + 1}
+                                </div>
+                                <span className={`ml-2 text-sm font-medium ${
+                                    index === 0 ? 'text-gray-900' : 'text-gray-500'
+                                }`}>
+                                    {step}
+                                </span>
+                                {index < 3 && (
+                                    <div className="w-12 h-0.5 bg-gray-200 mx-4"></div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-gray-800/50 to-slate-800/50 rounded-xl sm:rounded-2xl border border-slate-700 shadow-xl overflow-hidden">
-                    <div className="p-4 sm:p-5 md:p-6 border-b border-slate-700">
-                        <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2 sm:gap-3">
-                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-indigo-600 to-blue-600 flex items-center justify-center">
-                                <BsPlusLg className="text-white text-xs sm:text-sm" />
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center">
+                                <HiOutlineSparkles className="text-white text-lg" />
                             </div>
                             Product Information
                         </h2>
-                        <p className="text-gray-400 text-xs sm:text-sm mt-1 sm:mt-2">
-                            Fill in all required fields to add a new product
+                        <p className="text-gray-600 text-sm mt-2">
+                            Fill in all required fields to create your product listing
                         </p>
                     </div>
 
-                    <form onSubmit={add} className="p-3 sm:p-4 md:p-6">
-                        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6">
-                            <div className="space-y-4 sm:space-y-5">
-                                <div className="flex flex-col gap-1 sm:gap-2">
-                                    <label className="text-gray-300 py-1 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
-                                        Product Name
-                                        <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
-                                        onChange={inputHandle}
-                                        value={state.name}
-                                        type="text"
-                                        placeholder="Enter product name"
-                                        name="name"
-                                        id="name"
-                                        required
-                                    />
-                                </div>
-
-                                <div className="flex flex-col gap-1 sm:gap-2">
-                                    <label className="text-gray-300 py-1 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
-                                        Product Brand
-                                        <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
-                                        onChange={inputHandle}
-                                        value={state.brand}
-                                        type="text"
-                                        placeholder="Enter product brand"
-                                        name="brand"
-                                        id="brand"
-                                        required
-                                    />
-                                </div>
-
-                                <div className="flex flex-col gap-1 sm:gap-2 relative">
-                                    <label className="text-gray-300 py-1 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
-                                        Category & Subcategory
-                                        <span className="text-red-500">*</span>
-                                    </label>
-                                    <div
-                                        onClick={() => setCateShow(!cateShow)}
-                                        className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 cursor-pointer flex justify-between items-center text-sm sm:text-base"
-                                    >
-                                        <span className={category ? 'text-white' : 'text-gray-500'}>
-                                            {category
-                                                ? (subcategory ? `${category} > ${subcategory}` : category)
-                                                : "Select category"}
-                                        </span>
-                                        <svg
-                                            className={`w-3 h-3 sm:w-4 sm:h-4 text-gray-400 transition-transform ${cateShow ? 'rotate-180' : ''}`}
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                                        </svg>
-                                    </div>
-                                    <div
-                                        className={`absolute top-full left-0 right-0 mt-1 sm:mt-2 bg-gray-800 rounded-lg sm:rounded-xl shadow-xl z-10 overflow-hidden transition-all ${cateShow ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
-                                    >
-                                        <div className="p-2 sm:p-3 border-b border-slate-700">
+                    <form onSubmit={add} className="p-6 lg:p-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                            {/* Left Column - Basic Information */}
+                            <div className="space-y-6">
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                        <FiPackage className="text-gray-700" />
+                                        Basic Information
+                                    </h3>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Product Name *
+                                            </label>
                                             <input
-                                                value={searchValue}
-                                                onChange={categorySearch}
-                                                className="px-3 sm:px-4 py-1.5 sm:py-2 w-full focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-700 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors"
+                                                onChange={inputHandle}
+                                                value={state.name}
                                                 type="text"
-                                                placeholder="Search categories..."
-                                                autoFocus
+                                                placeholder="Enter product name"
+                                                name="name"
+                                                required
                                             />
                                         </div>
-                                        <div className="max-h-48 sm:max-h-60 overflow-y-auto custom-scrollbar">
-                                            {allCategory.length > 0 ? (
-                                                allCategory.map((c, i) => (
-                                                    <div
-                                                        key={i}
-                                                        className="relative"
-                                                        onMouseEnter={() => setHoveredCategory(c._id)}
-                                                        onMouseLeave={() => setHoveredCategory(null)}
-                                                    >
-                                                        <div
-                                                            className={`px-3 sm:px-4 py-2 sm:py-3 hover:bg-indigo-900/50 cursor-pointer transition-colors flex justify-between items-center text-sm sm:text-base ${category === c.name ? 'bg-indigo-900/30 text-indigo-300' : 'text-gray-300'}`}
-                                                            onClick={() => {
-                                                                setCategory(c.name);
-                                                                setSubcategory('');
-                                                                setCateShow(c.subcategories?.length > 0);
-                                                                if (c.subcategories?.length === 0) {
-                                                                    setCateShow(false);
-                                                                }
-                                                            }}
-                                                        >
-                                                            <div className="flex items-center gap-2 sm:gap-3">
-                                                                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-indigo-500"></div>
-                                                                {c.name}
-                                                            </div>
-                                                            {c.subcategories?.length > 0 && (
-                                                                <svg
-                                                                    className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400"
-                                                                    fill="none"
-                                                                    stroke="currentColor"
-                                                                    viewBox="0 0 24 24"
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                >
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-                                                                </svg>
-                                                            )}
-                                                        </div>
 
-                                                        {/* Subcategories dropdown */}
-                                                        {hoveredCategory === c._id && c.subcategories?.length > 0 && (
-                                                            <div className="absolute left-full top-0 ml-1 w-40 sm:w-48 bg-gray-800 border border-slate-700 rounded-lg shadow-lg z-20">
-                                                                <div className="max-h-48 sm:max-h-60 overflow-y-auto custom-scrollbar py-1 sm:py-2">
-                                                                    {c.subcategories.map((sub, idx) => (
-                                                                        <div
-                                                                            key={idx}
-                                                                            className={`px-3 sm:px-4 py-2 sm:py-3 hover:bg-indigo-900/50 cursor-pointer text-xs sm:text-sm ${subcategory === sub ? 'bg-indigo-900/30 text-indigo-300' : 'text-gray-300'}`}
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                setCategory(c.name);
-                                                                                setSubcategory(sub);
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Brand Name *
+                                            </label>
+                                            <input
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors"
+                                                onChange={inputHandle}
+                                                value={state.brand}
+                                                type="text"
+                                                placeholder="Enter brand name"
+                                                name="brand"
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="relative">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Category & Subcategory *
+                                            </label>
+                                            <div
+                                                onClick={() => setCateShow(!cateShow)}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none cursor-pointer flex justify-between items-center hover:border-gray-400 transition-colors"
+                                            >
+                                                <span className={category ? 'text-gray-900' : 'text-gray-500'}>
+                                                    {category
+                                                        ? (subcategory ? `${category} > ${subcategory}` : category)
+                                                        : "Select category"}
+                                                </span>
+                                                <svg
+                                                    className={`w-4 h-4 text-gray-400 transition-transform ${cateShow ? 'rotate-180' : ''}`}
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                                                </svg>
+                                            </div>
+                                            
+                                            {cateShow && (
+                                                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg z-10 overflow-hidden">
+                                                    <div className="p-3 border-b border-gray-200">
+                                                        <input
+                                                            value={searchValue}
+                                                            onChange={categorySearch}
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 outline-none"
+                                                            type="text"
+                                                            placeholder="Search categories..."
+                                                            autoFocus
+                                                        />
+                                                    </div>
+                                                    <div className="max-h-60 overflow-y-auto">
+                                                        {allCategory.length > 0 ? (
+                                                            allCategory.map((c, i) => (
+                                                                <div key={i} className="relative">
+                                                                    <div
+                                                                        className={`px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors flex justify-between items-center ${
+                                                                            category === c.name ? 'bg-green-50 text-green-700' : 'text-gray-700'
+                                                                        }`}
+                                                                        onClick={() => {
+                                                                            setCategory(c.name);
+                                                                            setSubcategory('');
+                                                                            if (c.subcategories?.length === 0) {
                                                                                 setCateShow(false);
-                                                                            }}
-                                                                        >
-                                                                            {sub}
+                                                                            }
+                                                                        }}
+                                                                        onMouseEnter={() => setHoveredCategory(c._id)}
+                                                                        onMouseLeave={() => setHoveredCategory(null)}
+                                                                    >
+                                                                        <div className="flex items-center gap-3">
+                                                                            <FiLayers className="text-gray-400" />
+                                                                            {c.name}
                                                                         </div>
-                                                                    ))}
+                                                                        {c.subcategories?.length > 0 && (
+                                                                            <svg
+                                                                                className="w-4 h-4 text-gray-400"
+                                                                                fill="none"
+                                                                                stroke="currentColor"
+                                                                                viewBox="0 0 24 24"
+                                                                            >
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                                                                            </svg>
+                                                                        )}
+                                                                    </div>
+
+                                                                    {hoveredCategory === c._id && c.subcategories?.length > 0 && (
+                                                                        <div className="absolute left-full top-0 ml-1 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-20">
+                                                                            <div className="max-h-60 overflow-y-auto py-2">
+                                                                                {c.subcategories.map((sub, idx) => (
+                                                                                    <div
+                                                                                        key={idx}
+                                                                                        className={`px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm ${
+                                                                                            subcategory === sub ? 'bg-green-50 text-green-700' : 'text-gray-700'
+                                                                                        }`}
+                                                                                        onClick={(e) => {
+                                                                                            e.stopPropagation();
+                                                                                            setCategory(c.name);
+                                                                                            setSubcategory(sub);
+                                                                                            setCateShow(false);
+                                                                                        }}
+                                                                                    >
+                                                                                        {sub}
+                                                                                    </div>
+                                                                                ))}
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
                                                                 </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="px-4 py-4 text-center text-gray-500 text-sm">
+                                                                No categories found
                                                             </div>
                                                         )}
                                                     </div>
-                                                ))
-                                            ) : (
-                                                <div className="px-3 sm:px-4 py-3 sm:py-4 text-center text-gray-500 text-sm">
-                                                    No categories found
                                                 </div>
                                             )}
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Stock Quantity *
+                                            </label>
+                                            <input
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors"
+                                                onChange={inputHandle}
+                                                value={state.stock}
+                                                type="number"
+                                                min="0"
+                                                placeholder="Enter stock quantity"
+                                                name="stock"
+                                                required
+                                            />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="flex flex-col gap-1 sm:gap-2">
-                                    <label className="text-gray-300 py-1 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
-                                        Stock Quantity
-                                        <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
-                                        onChange={inputHandle}
-                                        value={state.stock}
-                                        type="number"
-                                        min="0"
-                                        placeholder="Enter available stock"
-                                        name="stock"
-                                        id="stock"
-                                        required
-                                    />
-                                </div>
+                                {/* Dimensions & Weight */}
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                        {/* <FiRuler className="text-gray-700" /> */}
+                                        Dimensions & Weight
+                                    </h3>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Weight (kg) *
+                                            </label>
+                                            <input
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors"
+                                                onChange={inputHandle}
+                                                value={state.weight}
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                placeholder="Example: 2.4"
+                                                name="weight"
+                                                required
+                                            />
+                                        </div>
 
-                                <div className="flex flex-col gap-1 sm:gap-2">
-                                    <label className="text-gray-300 py-1 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
-                                        Price (₦)
-                                        <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
-                                        onChange={inputHandle}
-                                        value={state.price}
-                                        type="number"
-                                        placeholder="Enter price"
-                                        name="price"
-                                        id="price"
-                                        required
-                                    />
-                                </div>
-
-                                <div className="flex flex-col gap-1 sm:gap-2">
-                                    <label className="text-gray-300 py-1 font-medium text-sm sm:text-base">Discount (%)</label>
-                                    <input
-                                        min="0"
-                                        max="100"
-                                        className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
-                                        onChange={inputHandle}
-                                        value={state.discount}
-                                        type="number"
-                                        placeholder="Enter discount percentage"
-                                        name="discount"
-                                        id="discount"
-                                    />
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Dimensions (cm) *
+                                            </label>
+                                            <div className="grid grid-cols-3 gap-3">
+                                                <div>
+                                                    <input
+                                                        className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-center"
+                                                        onChange={inputHandle}
+                                                        value={state.length}
+                                                        type="number"
+                                                        min="0"
+                                                        placeholder="Length"
+                                                        name="length"
+                                                        required
+                                                    />
+                                                    <p className="text-xs text-gray-500 text-center mt-1">Length</p>
+                                                </div>
+                                                <div>
+                                                    <input
+                                                        className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-center"
+                                                        onChange={inputHandle}
+                                                        value={state.width}
+                                                        type="number"
+                                                        min="0"
+                                                        placeholder="Width"
+                                                        name="width"
+                                                        required
+                                                    />
+                                                    <p className="text-xs text-gray-500 text-center mt-1">Width</p>
+                                                </div>
+                                                <div>
+                                                    <input
+                                                        className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-center"
+                                                        onChange={inputHandle}
+                                                        value={state.height}
+                                                        type="number"
+                                                        min="0"
+                                                        placeholder="Height"
+                                                        name="height"
+                                                        required
+                                                    />
+                                                    <p className="text-xs text-gray-500 text-center mt-1">Height</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="mt-6 sm:mt-8">
-                            <label className="block py-1 text-gray-300 font-medium text-sm sm:text-base mb-2 sm:mb-3 flex items-center gap-1 sm:gap-2">
-                                Product Description
-                                <span className="text-red-500">*</span>
-                            </label>
-                            <div className="bg-black border border-slate-600 rounded-lg overflow-hidden">
-                                <JoditEditor
-                                    ref={editor}
-                                    value={content}
-                                    onBlur={setContent}
-                                    config={{
-                                        theme: 'dark',
-                                        readonly: false,
-                                        style: {
-                                            color: '#000',
-                                            background: 'transparent',
-                                        },
-                                    }}
-                                />
+                            {/* Right Column - Pricing & Media */}
+                            <div className="space-y-6">
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                        <FiDollarSign className="text-gray-700" />
+                                        Pricing Information
+                                    </h3>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Price (₦) *
+                                            </label>
+                                            <input
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors"
+                                                onChange={inputHandle}
+                                                value={state.price}
+                                                type="number"
+                                                placeholder="Enter price in Naira"
+                                                name="price"
+                                                required
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Discount (%)
+                                            </label>
+                                            <input
+                                                min="0"
+                                                max="100"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors"
+                                                onChange={inputHandle}
+                                                value={state.discount}
+                                                type="number"
+                                                placeholder="Enter discount percentage"
+                                                name="discount"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Product Description */}
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                        <BsInfoCircle className="text-gray-700" />
+                                        Product Description *
+                                    </h3>
+                                    <div className="border border-gray-300 rounded-lg overflow-hidden">
+                                        <JoditEditor
+                                            ref={editor}
+                                            value={content}
+                                            tabIndex={1}
+                                            onBlur={newContent => setContent(newContent)}
+                                            config={{
+                                                theme: 'light',
+                                                readonly: false,
+                                                toolbarAdaptive: false,
+                                                style: {
+                                                    minHeight: '200px'
+                                                },
+                                            }}
+                                        />
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
 
                         {/* Category-specific Specifications */}
                         {categorySpecs.length > 0 && (
-                            <div className="mt-6 sm:mt-8">
-                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2">
-                                    <label className="block text-gray-300 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
-                                        Product Specifications
-                                        <span className="text-red-500">*</span>
-                                    </label>
-                                    <span className="text-xs sm:text-sm text-indigo-400">
-                                        {category}{subcategory ? ` > ${subcategory}` : ''}
+                            <div className="mt-8 pt-8 border-t border-gray-200">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                    <FiTag className="text-gray-700" />
+                                    Product Specifications
+                                    <span className="text-sm font-normal text-gray-500 ml-2">
+                                        ({category}{subcategory ? ` > ${subcategory}` : ''})
                                     </span>
-                                </div>
-
-                                <div className="grid grid-cols-1 gap-3 sm:gap-4">
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {categorySpecs.map((spec, index) => (
-                                        <div key={index} className="flex flex-col gap-1 sm:gap-2">
-                                            <label className="text-gray-300 font-medium text-sm sm:text-base">{spec}</label>
+                                        <div key={index}>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                {spec} *
+                                            </label>
                                             <input
                                                 type="text"
                                                 value={specifications[spec] || ''}
                                                 onChange={(e) => handleSpecChange(spec, e.target.value)}
-                                                placeholder={`Enter ${spec}`}
-                                                className="px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-700/70 border border-slate-600 rounded-lg sm:rounded-xl text-gray-200 placeholder-gray-500 transition-all text-sm sm:text-base"
+                                                placeholder={`Enter ${spec.toLowerCase()}`}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors"
                                                 required
                                             />
                                         </div>
@@ -482,25 +604,34 @@ const AddProduct = () => {
                             </div>
                         )}
 
-                        <div className="mt-6 sm:mt-8">
-                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2">
-                                <label className="block text-gray-300 font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
-                                    Product Images
-                                    <span className="text-red-500">*</span>
-                                </label>
-                                <span className="text-xs sm:text-sm text-gray-500">{images.length}/8 images</span>
+                        {/* Image Upload */}
+                        <div className="mt-8 pt-8 border-t border-gray-200">
+                            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                        <BsImages className="text-gray-700" />
+                                        Product Images *
+                                    </h3>
+                                    <p className="text-gray-600 text-sm mt-1">
+                                        Upload up to 8 images of your product
+                                    </p>
+                                </div>
+                                <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">
+                                    {images.length}/8 images selected
+                                </div>
                             </div>
-                            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4">
+
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                                 {imageShow.map((img, i) => (
-                                    <div key={i} className="relative group h-28 sm:h-32 md:h-40 rounded-lg sm:rounded-xl overflow-hidden border-2 border-slate-700 hover:border-indigo-500 transition-all">
+                                    <div key={i} className="relative group aspect-square rounded-xl overflow-hidden border-2 border-gray-300 hover:border-green-500 transition-all shadow-sm">
                                         <label htmlFor={i} className="block w-full h-full cursor-pointer">
                                             <img
-                                                className="w-full h-full object-cover group-hover:opacity-70 transition-opacity"
+                                                className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
                                                 src={img.url}
                                                 alt="Preview"
                                             />
                                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <span className="text-white text-xs font-medium">Change</span>
+                                                <span className="text-white text-sm font-medium">Change Image</span>
                                             </div>
                                         </label>
                                         <input
@@ -513,9 +644,9 @@ const AddProduct = () => {
                                         <button
                                             type="button"
                                             onClick={() => removeImage(i)}
-                                            className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-gray-800/80 p-1 rounded-full text-red-400 shadow-md hover:bg-red-500 hover:text-white transition-colors"
+                                            className="absolute top-2 right-2 bg-white/90 hover:bg-red-500 text-gray-600 hover:text-white p-1.5 rounded-full shadow-md transition-colors"
                                         >
-                                            <IoCloseSharp className="text-sm sm:text-base" />
+                                            <IoCloseSharp className="text-lg" />
                                         </button>
                                     </div>
                                 ))}
@@ -523,14 +654,14 @@ const AddProduct = () => {
                                 {imageShow.length < 8 && (
                                     <>
                                         <label
-                                            className="flex flex-col justify-center items-center h-28 sm:h-32 md:h-40 rounded-lg sm:rounded-xl border-2 border-dashed border-slate-700 bg-gray-700/30 text-gray-400 hover:border-indigo-500 hover:text-indigo-400 transition-all cursor-pointer"
+                                            className="flex flex-col items-center justify-center aspect-square rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 hover:border-green-500 hover:bg-green-50 transition-all cursor-pointer group"
                                             htmlFor="image"
                                         >
-                                            <div className="p-2 sm:p-3 rounded-full bg-indigo-900/30 text-indigo-400 mb-2 sm:mb-3">
-                                                <BsUpload className="text-lg sm:text-xl" />
+                                            <div className="p-3 rounded-full bg-green-100 text-green-600 mb-3 group-hover:bg-green-200 transition-colors">
+                                                <BsUpload className="text-xl" />
                                             </div>
-                                            <span className="font-medium text-center px-2 text-xs sm:text-sm">Upload Images</span>
-                                            <span className="text-xs text-gray-500 mt-0.5">Max 8 images</span>
+                                            <span className="font-medium text-gray-700 text-sm text-center px-2">Upload Images</span>
+                                            <span className="text-xs text-gray-500 mt-1">PNG, JPG, JPEG</span>
                                         </label>
                                         <input
                                             multiple
@@ -545,42 +676,34 @@ const AddProduct = () => {
                             </div>
                         </div>
 
-                        <div className="mt-8 sm:mt-10 flex justify-center">
-                            <button
-                                disabled={loader}
-                                className={`w-full max-w-md py-4 sm:py-4 px-4 sm:px-6 rounded-full sm:rounded-xl font-semibold text-white shadow-lg transition-all flex items-center justify-center text-sm sm:text-base ${loader
-                                    ? 'bg-indigo-800'
-                                    : 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 hover:shadow-xl'
+                        {/* Submit Button */}
+                        <div className="mt-8 pt-8 border-t border-gray-200">
+                            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                                <div className="text-sm text-gray-600">
+                                    All fields marked with * are required
+                                </div>
+                                <button
+                                    disabled={loader}
+                                    className={`w-full sm:w-auto min-w-[200px] py-4 px-8 rounded-xl font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2 ${
+                                        loader
+                                            ? 'bg-gray-400 cursor-not-allowed'
+                                            : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 hover:shadow-xl transform hover:-translate-y-0.5'
                                     }`}
-                            >
-                                {loader ? (
-                                    <PropagateLoader color="#fff" cssOverride={overrideStyle} />
-                                ) : (
-                                    <>
-                                        Add Product
-                                    </>
-                                )}
-                            </button>
+                                >
+                                    {loader ? (
+                                        <PropagateLoader color="#fff" cssOverride={overrideStyle} />
+                                    ) : (
+                                        <>
+                                            <BsPlusLg className="text-lg" />
+                                            Add Product
+                                        </>
+                                    )}
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
-
-            <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: #4b5563;
-                    border-radius: 10px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: #3b82f6;
-                }
-            `}</style>
         </div>
     );
 };

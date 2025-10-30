@@ -99,11 +99,11 @@ const Orders = () => {
     }, [myOrders, sortConfig]);
 
     const statusStyles = {
-        paid: { bg: 'bg-emerald-900/30', text: 'text-emerald-400', border: 'border-emerald-500/30', icon: FiCheckCircle },
-        pending: { bg: 'bg-amber-900/30', text: 'text-amber-400', border: 'border-amber-500/30', icon: FiClock },
-        unpaid: { bg: 'bg-red-900/30', text: 'text-red-400', border: 'border-red-500/30', icon: FiClock },
-        delivered: { bg: 'bg-indigo-900/30', text: 'text-indigo-400', border: 'border-indigo-500/30', icon: FiPackage },
-        cancelled: { bg: 'bg-gray-800', text: 'text-gray-400', border: 'border-gray-700', icon: FiPackage }
+        paid: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200', icon: FiCheckCircle },
+        pending: { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200', icon: FiClock },
+        unpaid: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', icon: FiClock },
+        delivered: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', icon: FiPackage },
+        cancelled: { bg: 'bg-gray-100', text: 'text-gray-700', border: 'border-gray-200', icon: FiPackage }
     };
 
     const formatDate = dateString => {
@@ -130,16 +130,16 @@ const Orders = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
-            className="min-h-screen bg-gradient-to-br from-slate-900 to-gray-900 px-2 sm:px-4 lg:px-6 py-4 sm:py-6"
+            className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-6"
         >
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
                     <div>
-                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-2">
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
                             Order Management
                         </h1>
-                        <p className="text-gray-400 text-sm sm:text-base">
+                        <p className="text-gray-600 text-sm sm:text-base">
                             Manage and track your customer orders
                         </p>
                     </div>
@@ -147,17 +147,17 @@ const Orders = () => {
                     <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                         <button 
                             onClick={() => setShowFilters(!showFilters)}
-                            className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-gray-800 hover:bg-gray-700/70 rounded-lg text-gray-300 transition-all text-sm"
+                            className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-gray-700 transition-all text-sm font-medium"
                         >
-                            <FiFilter className="text-indigo-400" />
-                            <span className="hidden xs:inline">Filters</span>
+                            <FiFilter className="text-gray-600" />
+                            <span>Filters</span>
                         </button>
                         <button 
                             onClick={clearFilters}
-                            className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-gray-800 hover:bg-gray-700/70 rounded-lg text-gray-300 transition-all text-sm"
+                            className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-gray-700 transition-all text-sm font-medium"
                         >
-                            <FiRefreshCw className="text-indigo-400" />
-                            <span className="hidden xs:inline">Reset</span>
+                            <FiRefreshCw className="text-gray-600" />
+                            <span>Reset</span>
                         </button>
                     </div>
                 </div>
@@ -167,16 +167,16 @@ const Orders = () => {
                     <motion.div 
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="bg-gray-800/50 border border-gray-700 rounded-xl p-4 sm:p-5 mb-6"
+                        className="bg-white border border-gray-200 rounded-lg p-5 mb-6 shadow-sm"
                     >
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div>
-                                <label className="block text-xs sm:text-sm text-gray-400 mb-2">Payment Status</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Payment Status</label>
                                 <select
                                     name="paymentStatus"
                                     value={filters.paymentStatus}
                                     onChange={handleFilterChange}
-                                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                                    className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-sm"
                                 >
                                     {statusOptions.map(option => (
                                         <option key={option.value} value={option.value}>
@@ -187,12 +187,12 @@ const Orders = () => {
                             </div>
                             
                             <div>
-                                <label className="block text-xs sm:text-sm text-gray-400 mb-2">Delivery Status</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Delivery Status</label>
                                 <select
                                     name="deliveryStatus"
                                     value={filters.deliveryStatus}
                                     onChange={handleFilterChange}
-                                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                                    className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-sm"
                                 >
                                     {statusOptions.map(option => (
                                         <option key={option.value} value={option.value}>
@@ -203,26 +203,26 @@ const Orders = () => {
                             </div>
                             
                             <div>
-                                <label className="block text-xs sm:text-sm text-gray-400 mb-2">Min Amount</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Min Amount</label>
                                 <input
                                     type="number"
                                     name="minAmount"
                                     value={filters.minAmount}
                                     onChange={handleFilterChange}
                                     placeholder="Min"
-                                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                                    className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-sm"
                                 />
                             </div>
                             
                             <div>
-                                <label className="block text-xs sm:text-sm text-gray-400 mb-2">Max Amount</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Max Amount</label>
                                 <input
                                     type="number"
                                     name="maxAmount"
                                     value={filters.maxAmount}
                                     onChange={handleFilterChange}
                                     placeholder="Max"
-                                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                                    className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-sm"
                                 />
                             </div>
                         </div>
@@ -237,7 +237,7 @@ const Orders = () => {
                         </div>
                         <input
                             type="text"
-                            className="block w-full pl-10 pr-3 py-2.5 border border-gray-700 rounded-lg leading-5 bg-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-300 text-sm"
+                            className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-gray-900 text-sm"
                             placeholder="Search orders..."
                             value={searchValue}
                             onChange={(e) => setSearchValue(e.target.value)}
@@ -245,11 +245,11 @@ const Orders = () => {
                     </div>
                     
                     <div className="flex items-center gap-3 w-full sm:w-auto">
-                        <span className="text-gray-400 text-xs sm:text-sm hidden sm:block">Show:</span>
+                        <span className="text-gray-700 text-sm hidden sm:block">Show:</span>
                         <select
                             value={parPage}
                             onChange={(e) => setParPage(e.target.value)}
-                            className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                            className="bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-sm"
                         >
                             <option value="5">5 per page</option>
                             <option value="10">10 per page</option>
@@ -260,12 +260,12 @@ const Orders = () => {
                 </div>
 
                 {/* Orders Table - Desktop */}
-                <div className="hidden md:block bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700 shadow-xl overflow-hidden">
+                <div className="hidden md:block bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-700">
-                            <thead className="bg-gray-800/50">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
                                 <tr>
-                                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('date')}>
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('date')}>
                                         <div className="flex items-center">
                                             Date
                                             {sortConfig.key === 'date' && (
@@ -275,10 +275,10 @@ const Orders = () => {
                                             )}
                                         </div>
                                     </th>
-                                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                         Order ID
                                     </th>
-                                    <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('price')}>
+                                    <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('price')}>
                                         <div className="flex items-center justify-end">
                                             Amount
                                             {sortConfig.key === 'price' && (
@@ -288,57 +288,57 @@ const Orders = () => {
                                             )}
                                         </div>
                                     </th>
-                                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                         Payment
                                     </th>
-                                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                         Status
                                     </th>
-                                    <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-gray-800/20 divide-y divide-gray-700/50">
+                            <tbody className="bg-white divide-y divide-gray-200">
                                 {sortedOrders.length > 0 ? (
                                     sortedOrders.map((order) => (
-                                        <tr key={order._id} className="hover:bg-gray-800/40 transition-all">
-                                            <td className="px-4 py-3 whitespace-nowrap">
+                                        <tr key={order._id} className="hover:bg-gray-50 transition-all">
+                                            <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center">
                                                     <FiCalendar className="mr-2 text-gray-500 text-sm" />
-                                                    <span className="text-sm text-gray-300">
+                                                    <span className="text-sm text-gray-900">
                                                         {formatDate(order.date)}
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-3 whitespace-nowrap">
-                                                <div className="text-sm font-medium text-gray-200">#{order._id.slice(-8)}</div>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm font-semibold text-gray-900">#{order._id.slice(-8)}</div>
                                                 {order.customer?.name && (
-                                                    <div className="text-xs text-gray-500 mt-1">{order.customer.name}</div>
+                                                    <div className="text-xs text-gray-600 mt-1">{order.customer.name}</div>
                                                 )}
                                             </td>
-                                            <td className="px-4 py-3 whitespace-nowrap text-right">
-                                                <div className="text-sm font-medium text-gray-200">
+                                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                                                <div className="text-sm font-semibold text-gray-900">
                                                     {formatCurrency(order.price)}
                                                 </div>
-                                                <div className="text-xs text-gray-500 mt-1">
+                                                <div className="text-xs text-gray-600 mt-1">
                                                     {order.products?.length || 0} items
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-3 whitespace-nowrap">
-                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusStyles[order.payment_status]?.bg} ${statusStyles[order.payment_status]?.text} border ${statusStyles[order.payment_status]?.border}`}>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`px-3 py-1.5 rounded-full text-xs font-medium ${statusStyles[order.payment_status]?.bg} ${statusStyles[order.payment_status]?.text} border ${statusStyles[order.payment_status]?.border}`}>
                                                     {order.payment_status}
                                                 </span>
                                             </td>
-                                            <td className="px-4 py-3 whitespace-nowrap">
-                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusStyles[order.delivery_status]?.bg} ${statusStyles[order.delivery_status]?.text} border ${statusStyles[order.delivery_status]?.border}`}>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`px-3 py-1.5 rounded-full text-xs font-medium ${statusStyles[order.delivery_status]?.bg} ${statusStyles[order.delivery_status]?.text} border ${statusStyles[order.delivery_status]?.border}`}>
                                                     {order.delivery_status}
                                                 </span>
                                             </td>
-                                            <td className="px-4 py-3 whitespace-nowrap text-right">
+                                            <td className="px-6 py-4 whitespace-nowrap text-right">
                                                 <Link
                                                     to={`/seller/dashboard/order/details/${order._id}`}
-                                                    className="inline-flex items-center justify-center px-2.5 py-1.5 bg-indigo-900/30 hover:bg-indigo-800/50 rounded-lg text-indigo-300 hover:text-white transition-colors text-sm"
+                                                    className="inline-flex items-center justify-center px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg text-blue-700 hover:text-blue-800 transition-colors text-sm font-medium"
                                                 >
                                                     <FiEye className="mr-1.5 text-xs" /> 
                                                     View
@@ -348,15 +348,15 @@ const Orders = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="px-6 py-12 text-center">
+                                        <td colSpan="6" className="px-6 py-16 text-center">
                                             <div className="text-gray-500">
                                                 <div className="flex justify-center mb-4">
-                                                    <div className="bg-gray-800 p-4 rounded-full">
-                                                        <FiSearch className="text-xl text-gray-600" />
+                                                    <div className="bg-gray-100 p-4 rounded-full">
+                                                        <FiSearch className="text-xl text-gray-400" />
                                                     </div>
                                                 </div>
-                                                <p className="text-gray-400">No orders found</p>
-                                                <p className="text-xs mt-2 text-gray-500">Try adjusting your search or filters</p>
+                                                <p className="text-gray-700 text-lg font-semibold">No orders found</p>
+                                                <p className="text-sm mt-2 text-gray-600">Try adjusting your search or filters</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -367,7 +367,7 @@ const Orders = () => {
 
                     {/* Pagination */}
                     {totalOrder > parPage && (
-                        <div className="px-4 py-3 bg-gray-800/30 border-t border-gray-700">
+                        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
                             <Pagination
                                 pageNumber={currentPage}
                                 setPageNumber={setCurrentPage}
@@ -380,25 +380,25 @@ const Orders = () => {
                 </div>
 
                 {/* Mobile Orders List */}
-                <div className="md:hidden space-y-3">
+                <div className="md:hidden space-y-4">
                     {sortedOrders.length > 0 ? (
                         sortedOrders.map((order) => {
                             const PaymentIcon = statusStyles[order.payment_status]?.icon || FiDollarSign;
                             const DeliveryIcon = statusStyles[order.delivery_status]?.icon || FiPackage;
                             
                             return (
-                                <div key={order._id} className="bg-gray-800/40 border border-gray-700 rounded-lg p-4">
+                                <div key={order._id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                                     <div className="flex justify-between items-start mb-3">
                                         <div>
-                                            <div className="text-sm font-medium text-white">#{order._id.slice(-8)}</div>
-                                            <div className="flex items-center mt-1 text-xs text-gray-400">
+                                            <div className="text-sm font-semibold text-gray-900">#{order._id.slice(-8)}</div>
+                                            <div className="flex items-center mt-1 text-xs text-gray-600">
                                                 <FiCalendar className="mr-1" />
                                                 {formatDate(order.date)}
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-sm font-medium text-white">{formatCurrency(order.price)}</div>
-                                            <div className="text-xs text-gray-400">{order.products?.length || 0} items</div>
+                                            <div className="text-sm font-semibold text-gray-900">{formatCurrency(order.price)}</div>
+                                            <div className="text-xs text-gray-600">{order.products?.length || 0} items</div>
                                         </div>
                                     </div>
                                     
@@ -408,7 +408,7 @@ const Orders = () => {
                                                 <PaymentIcon className={`text-sm ${statusStyles[order.payment_status]?.text}`} />
                                             </div>
                                             <div>
-                                                <div className="text-xs text-gray-400">Payment</div>
+                                                <div className="text-xs text-gray-600">Payment</div>
                                                 <div className={`text-xs font-medium ${statusStyles[order.payment_status]?.text}`}>
                                                     {order.payment_status}
                                                 </div>
@@ -419,7 +419,7 @@ const Orders = () => {
                                                 <DeliveryIcon className={`text-sm ${statusStyles[order.delivery_status]?.text}`} />
                                             </div>
                                             <div>
-                                                <div className="text-xs text-gray-400">Status</div>
+                                                <div className="text-xs text-gray-600">Status</div>
                                                 <div className={`text-xs font-medium ${statusStyles[order.delivery_status]?.text}`}>
                                                     {order.delivery_status}
                                                 </div>
@@ -428,7 +428,7 @@ const Orders = () => {
                                     </div>
                                     
                                     {order.customer?.name && (
-                                        <div className="text-xs text-gray-400 mb-3">
+                                        <div className="text-xs text-gray-600 mb-3">
                                             Customer: {order.customer.name}
                                         </div>
                                     )}
@@ -436,7 +436,7 @@ const Orders = () => {
                                     <div className="flex justify-end">
                                         <Link
                                             to={`/seller/dashboard/order/details/${order._id}`}
-                                            className="inline-flex items-center justify-center px-3 py-1.5 bg-indigo-900/30 hover:bg-indigo-800/50 rounded-lg text-indigo-300 hover:text-white transition-colors text-xs"
+                                            className="inline-flex items-center justify-center px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg text-blue-700 hover:text-blue-800 transition-colors text-xs font-medium"
                                         >
                                             <FiEye className="mr-1.5" /> 
                                             View Details
@@ -449,19 +449,19 @@ const Orders = () => {
                         <div className="px-4 py-8 text-center">
                             <div className="text-gray-500">
                                 <div className="flex justify-center mb-4">
-                                    <div className="bg-gray-800 p-4 rounded-full">
-                                        <FiSearch className="text-xl text-gray-600" />
+                                    <div className="bg-gray-100 p-4 rounded-full">
+                                        <FiSearch className="text-xl text-gray-400" />
                                     </div>
                                 </div>
-                                <p className="text-gray-400">No orders found</p>
-                                <p className="text-xs mt-2 text-gray-500">Try adjusting your search or filters</p>
+                                <p className="text-gray-700 text-lg font-semibold">No orders found</p>
+                                <p className="text-sm mt-2 text-gray-600">Try adjusting your search or filters</p>
                             </div>
                         </div>
                     )}
                     
                     {/* Pagination for mobile */}
                     {totalOrder > parPage && (
-                        <div className="px-2 py-3 bg-gray-800/30 border-t border-gray-700 rounded-lg">
+                        <div className="px-2 py-3 bg-gray-50 border-t border-gray-200 rounded-lg">
                             <Pagination
                                 pageNumber={currentPage}
                                 setPageNumber={setCurrentPage}
@@ -474,35 +474,35 @@ const Orders = () => {
                 </div>
 
                 {/* Stats Summary */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">
-                    <div className="bg-gradient-to-br from-indigo-900/30 to-indigo-900/10 border border-indigo-700/30 rounded-xl p-3 sm:p-4">
-                        <div className="text-gray-400 text-xs sm:text-sm mb-1">Total Orders</div>
-                        <div className="text-lg sm:text-xl font-bold text-white">{stats.total}</div>
-                        <div className="text-xs text-indigo-400 mt-1">All matching orders</div>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                    <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div className="text-gray-600 text-sm mb-1">Total Orders</div>
+                        <div className="text-xl font-bold text-gray-900">{stats.total}</div>
+                        <div className="text-xs text-gray-500 mt-1">All matching orders</div>
                     </div>
                     
-                    <div className="bg-gradient-to-br from-emerald-900/30 to-emerald-900/10 border border-emerald-700/30 rounded-xl p-3 sm:p-4">
-                        <div className="text-gray-400 text-xs sm:text-sm mb-1">Paid Orders</div>
-                        <div className="text-lg sm:text-xl font-bold text-white">
+                    <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div className="text-gray-600 text-sm mb-1">Paid Orders</div>
+                        <div className="text-xl font-bold text-gray-900">
                             {stats.paid}
                         </div>
-                        <div className="text-xs text-emerald-400 mt-1">Paid orders</div>
+                        <div className="text-xs text-gray-500 mt-1">Paid orders</div>
                     </div>
                     
-                    <div className="bg-gradient-to-br from-amber-900/30 to-amber-900/10 border border-amber-700/30 rounded-xl p-3 sm:p-4">
-                        <div className="text-gray-400 text-xs sm:text-sm mb-1">Pending Orders</div>
-                        <div className="text-lg sm:text-xl font-bold text-white">
+                    <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div className="text-gray-600 text-sm mb-1">Pending Orders</div>
+                        <div className="text-xl font-bold text-gray-900">
                             {stats.pending}
                         </div>
-                        <div className="text-xs text-amber-400 mt-1">Pending payments</div>
+                        <div className="text-xs text-gray-500 mt-1">Pending payments</div>
                     </div>
                     
-                    <div className="bg-gradient-to-br from-purple-900/30 to-purple-900/10 border border-purple-700/30 rounded-xl p-3 sm:p-4">
-                        <div className="text-gray-400 text-xs sm:text-sm mb-1">Avg. Order</div>
-                        <div className="text-lg sm:text-xl font-bold text-white">
+                    <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div className="text-gray-600 text-sm mb-1">Avg. Order</div>
+                        <div className="text-xl font-bold text-gray-900">
                             {formatCurrency(stats.pageAvg)}
                         </div>
-                        <div className="text-xs text-purple-400 mt-1">Average value</div>
+                        <div className="text-xs text-gray-500 mt-1">Average value</div>
                     </div>
                 </div>
             </div>

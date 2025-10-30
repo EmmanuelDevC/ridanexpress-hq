@@ -21,7 +21,7 @@ if (mode === production) {
     api_url = "https://ridanexpress-api-lqo6.onrender.com"
     // api_url = "http://localhost:5000"
 } else {
-    // app_url = 'http://localhost:3001'
+    app_url = 'http://localhost:3001'
     api_url = "https://ridanexpress-api-lqo6.onrender.com"
     // api_url = "http://localhost:5000"
 }

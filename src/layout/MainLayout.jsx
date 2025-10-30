@@ -36,7 +36,7 @@ const MainLayout = () => {
     <div className='bg-[#161d31] w-full min-h-screen'>
       <Header showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <div className='ml-0 lg:ml-[260px] transition-all'>
+      <div className='ml-0 lg:ml-[260px] lg:mb-0 mb-[5rem] transition-all'>
         <Outlet />
       </div>
       <div className='block lg:hidden'>

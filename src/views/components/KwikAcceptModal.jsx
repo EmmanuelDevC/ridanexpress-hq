@@ -1,153 +1,143 @@
-import React, { useState } from 'react';
-import { FiPackage, FiX, FiCheck, FiMapPin, FiDollarSign, FiLoader } from 'react-icons/fi';
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
-import { api_url } from '../../utils/utils';
+import React, { useState, useEffect } from 'react';
+import api from '../api/api';
 
-const KwikAcceptModal = ({ 
-  order, 
-  sellerAddress, 
-  onClose, 
-  onAccept 
-}) => {
-  const [weight, setWeight] = useState(1);
-  const [pickupAddress, setPickupAddress] = useState(sellerAddress || '');
-  const [fee, setFee] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+const KwikAcceptModal = ({ order, onClose, onAccept }) => {
+    const [vehicles, setVehicles] = useState([]);
+    const [selectedVehicle, setSelectedVehicle] = useState('');
+    const [isInsured, setIsInsured] = useState(true);
+    const [instructions, setInstructions] = useState('');
+    const [loadersCount, setLoadersCount] = useState(0);
+    const [calculatedFee, setCalculatedFee] = useState(0);
+    const [loading, setLoading] = useState(false);
 
-  const calculateFee = async () => {
-    if (!pickupAddress) {
-      setError('Please enter pickup address');
-      return;
-    }
-    
-    if (!order.shippingInfo?.address) {
-      setError('Delivery address not found');
-      return;
-    }
-    
-    setLoading(true);
-    setError('');
-    
-    try {
-      const response = await axios.post(
-        `${api_url}/api/seller/calculate-kwik-fee`,
-        {
-          pickup: pickupAddress,
-          delivery: order.shippingInfo.address,
-          weight
-        },
-        { withCredentials: true }
-      );
-      
-      setFee(response.data.fee);
-    } catch (error) {
-      setError(error.response?.data?.error || 'Failed to calculate fee. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    useEffect(() => {
+        fetchVehicleOptions();
+        calculateFee();
+    }, [selectedVehicle, isInsured, loadersCount]);
 
-  const handleAccept = () => {
-    if (!fee) {
-      setError('Please calculate fee first');
-      return;
-    }
-    onAccept({
-      weight,
-      pickupAddress
-    });
-  };
+    const fetchVehicleOptions = async () => {
+        try {
+            const response = await api.get('/shipping/vehicles');
+            setVehicles(response.data.vehicles);
+            if (response.data.vehicles.length > 0) {
+                setSelectedVehicle(response.data.vehicles[0].vehicle_id);
+            }
+        } catch (error) {
+            console.error('Failed to fetch vehicles:', error);
+        }
+    };
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-md overflow-hidden">
-        <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-xl font-bold">Arrange Kwik Delivery</h2>
-          <button 
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <FiX size={24} />
-          </button>
-        </div>
+    const calculateFee = async () => {
+        if (!selectedVehicle) return;
+        
+        try {
+            const response = await api.post('/seller/calculate-kwik-fee', {
+                orderId: order._id,
+                vehicleId: selectedVehicle,
+                isInsured,
+                loadersCount
+            });
+            setCalculatedFee(response.data.fee);
+        } catch (error) {
+            console.error('Fee calculation failed:', error);
+        }
+    };
 
-        <div className="p-4 space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Package Weight (kg)</label>
-            <div className="relative">
-              <input
-                type="number"
-                min="0.1"
-                step="0.1"
-                value={weight}
-                onChange={(e) => setWeight(e.target.value)}
-                className="w-full p-3 border rounded-lg"
-                placeholder="Enter weight in kg"
-              />
-              <FiPackage className="absolute right-3 top-3.5 text-gray-400" />
+    const handleAccept = async () => {
+        setLoading(true);
+        try {
+            await onAccept({
+                vehicleId: selectedVehicle,
+                isInsured,
+                instructions,
+                loadersCount
+            });
+            onClose();
+        } catch (error) {
+            console.error('Acceptance failed:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-96">
+                <h2 className="text-xl font-bold mb-4">Accept with Kwik Delivery</h2>
+                
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium mb-2">Vehicle Type</label>
+                        <select 
+                            value={selectedVehicle} 
+                            onChange={(e) => setSelectedVehicle(e.target.value)}
+                            className="w-full border rounded p-2"
+                        >
+                            {vehicles.map(vehicle => (
+                                <option key={vehicle.vehicle_id} value={vehicle.vehicle_id}>
+                                    {vehicle.name} (Max {vehicle.weight}kg)
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="flex items-center">
+                        <input 
+                            type="checkbox" 
+                            checked={isInsured}
+                            onChange={(e) => setIsInsured(e.target.checked)}
+                            className="mr-2"
+                        />
+                        <label>Include Insurance</label>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium mb-2">Loaders Required</label>
+                        <input 
+                            type="number" 
+                            min="0" 
+                            max="4"
+                            value={loadersCount}
+                            onChange={(e) => setLoadersCount(parseInt(e.target.value))}
+                            className="w-full border rounded p-2"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium mb-2">Instructions</label>
+                        <textarea 
+                            value={instructions}
+                            onChange={(e) => setInstructions(e.target.value)}
+                            className="w-full border rounded p-2"
+                            rows="3"
+                            placeholder="Special handling instructions..."
+                        />
+                    </div>
+
+                    <div className="font-bold text-lg">
+                        Delivery Fee: ₦{calculatedFee}
+                    </div>
+
+                    <div className="flex justify-end space-x-2">
+                        <button 
+                            onClick={onClose}
+                            className="px-4 py-2 border rounded"
+                            disabled={loading}
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            onClick={handleAccept}
+                            disabled={loading}
+                            className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+                        >
+                            {loading ? 'Processing...' : 'Accept & Dispatch'}
+                        </button>
+                    </div>
+                </div>
             </div>
-            <p className="text-xs text-gray-500 mt-1">Minimum weight: 0.1kg</p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Pickup Address</label>
-            <div className="relative">
-              <textarea
-                value={pickupAddress}
-                onChange={(e) => setPickupAddress(e.target.value)}
-                rows="3"
-                className="w-full p-3 border rounded-lg"
-                placeholder="Enter your pickup address"
-              />
-              <FiMapPin className="absolute right-3 top-3.5 text-gray-400" />
-            </div>
-          </div>
-
-          {error && (
-            <div className="text-red-500 text-sm p-2 bg-red-50 rounded-lg">
-              {error}
-            </div>
-          )}
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={calculateFee}
-              disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
-            >
-              {loading ? <FiLoader className="animate-spin" /> : <FiDollarSign />}
-              Calculate Delivery Fee
-            </button>
-            
-            {fee !== null && !error && (
-              <div className="ml-2 text-lg font-semibold">
-                ₦{fee.toFixed(2)}
-              </div>
-            )}
-          </div>
         </div>
-
-        <div className="p-4 bg-gray-50 flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-lg"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleAccept}
-            disabled={!fee}
-            className={`px-4 py-2 bg-green-600 text-white rounded-lg flex items-center gap-2 ${!fee ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            <FiCheck size={18} />
-            Confirm and Dispatch Rider
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default KwikAcceptModal;

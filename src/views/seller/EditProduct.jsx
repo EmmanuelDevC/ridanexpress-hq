@@ -1,4 +1,3 @@
-// src/pages/seller/EditProduct.js
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -24,7 +23,11 @@ const EditProduct = () => {
         discount: '',
         price: "",
         brand: "",
-        stock: ""
+        stock: "",
+        weight: "",
+        length: "",
+        width: "",
+        height: ""
     });
     
     const [cateShow, setCateShow] = useState(false);
@@ -54,7 +57,11 @@ const EditProduct = () => {
                 discount: product.discount != null ? String(product.discount) : '',
                 price: product.price != null ? String(product.price) : "",
                 brand: product.brand || "",
-                stock: product.stock != null ? String(product.stock) : ""
+                stock: product.stock != null ? String(product.stock) : "",
+                weight: product.weight != null ? String(product.weight) : "",
+                length: product.length != null ? String(product.length) : "",
+                width: product.width != null ? String(product.width) : "",
+                height: product.height != null ? String(product.height) : ""
             });
             setContent(product.description || '');
             setCategory(product.category || '');
@@ -120,7 +127,11 @@ const EditProduct = () => {
             brand: state.brand,
             stock: state.stock ? Number(state.stock) : 0,
             productId: productId,
-            category
+            category,
+            weight: state.weight ? parseFloat(state.weight) : 0,
+            length: state.length ? parseFloat(state.length) : 0,
+            width: state.width ? parseFloat(state.width) : 0,
+            height: state.height ? parseFloat(state.height) : 0
         };
         dispatch(update_product(obj));
     };
@@ -262,6 +273,58 @@ const EditProduct = () => {
                                     name='discount' 
                                     id='discount' 
                                 />
+                            </div>
+
+                            {/* Added weight and dimensions fields */}
+                            <div className="relative">
+                                <label className='block text-gray-400 text-sm mb-2' htmlFor="weight">Weight (kg)</label>
+                                <input 
+                                    className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white text-sm sm:text-base'
+                                    onChange={inputHandle} 
+                                    value={state.weight} 
+                                    type="number" 
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="Enter weight in kg" 
+                                    name='weight' 
+                                    id='weight' 
+                                />
+                            </div>
+
+                            <div className="relative">
+                                <label className='block text-gray-400 text-sm mb-2'>Dimensions (cm)</label>
+                                <div className="grid grid-cols-3 gap-2">
+                                    <input 
+                                        className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white text-sm sm:text-base'
+                                        onChange={inputHandle} 
+                                        value={state.length} 
+                                        type="number" 
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="Length" 
+                                        name='length' 
+                                    />
+                                    <input 
+                                        className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white text-sm sm:text-base'
+                                        onChange={inputHandle} 
+                                        value={state.width} 
+                                        type="number" 
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="Width" 
+                                        name='width' 
+                                    />
+                                    <input 
+                                        className='w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-white text-sm sm:text-base'
+                                        onChange={inputHandle} 
+                                        value={state.height} 
+                                        type="number" 
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="Height" 
+                                        name='height' 
+                                    />
+                                </div>
                             </div>
                         </div>
                         

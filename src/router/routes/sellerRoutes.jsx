@@ -67,12 +67,6 @@ export const sellerRoutes = [
         visibility: ['active', 'deactive']
     },
     {
-        path: '/seller/dashboard/premium-subscription',
-        element: <Premium />,
-        role: 'seller',
-        visibility: ['active', 'deactive']
-    },
-    {
         path: '/seller/dashboard/order/details/:orderId',
         element: <OrderDetails />,
         role: 'seller',
@@ -95,6 +89,12 @@ export const sellerRoutes = [
         element: <SellerToCustomer />,
         role: 'seller',
         status: 'active'
+    },
+    {
+        path: '/seller/dashboard/premium-subscription',
+        element: <Premium />,
+        role: 'seller',
+        visibility: ['active', 'deactive']
     },
     {
         path: '/seller/dashboard/chat-customer',

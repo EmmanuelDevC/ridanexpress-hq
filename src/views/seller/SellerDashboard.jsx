@@ -1,23 +1,32 @@
 import React, { useEffect } from 'react'
 import VerifiedTwoToneIcon from '@mui/icons-material/VerifiedTwoTone';
 import { Link } from 'react-router-dom'
-import AssuredWorkloadSharpIcon from '@mui/icons-material/AssuredWorkloadSharp';
-import CategorySharpIcon from '@mui/icons-material/CategorySharp';
-import LocalMallSharpIcon from '@mui/icons-material/LocalMallSharp';
-import PendingActionsSharpIcon from '@mui/icons-material/PendingActionsSharp';
 import Chart from 'react-apexcharts'
 import customer from '../../assets/seller.png'
 import { useSelector, useDispatch } from 'react-redux'
 import { get_seller_dashboard_index_data } from '../../store/Reducers/dashboardIndexReducer'
 import moment from 'moment'
-import { FaCircle } from 'react-icons/fa'
 import { get_seller_payemt_details } from '../../store/Reducers/PaymentReducer';
-import { FiArrowUpRight } from 'react-icons/fi'
+import { 
+    FiArrowUpRight, 
+    FiEye, 
+    FiMessageSquare, 
+    FiPackage, 
+    FiTrendingUp, 
+    FiUsers, 
+    FiShoppingCart, 
+    FiDollarSign,
+    FiMail,
+    FiCalendar,
+    FiMapPin
+} from 'react-icons/fi';
+import { BsDot, BsThreeDotsVertical, BsCheckCircle, BsClock } from 'react-icons/bs';
 
 // Number formatting utility function
 const formatNumber = (num) => {
-    if (!num) return '0'; // Handle undefined/null cases
-    if (num >= 1000000) return `${Math.round(num / 1000000)}M`;
+    if (!num) return '0';
+    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
@@ -44,396 +53,554 @@ const SellerDashboard = () => {
     }, [dispatch])
 
     const chartState = {
-        series: [
-            {
-                name: "Orders",
-                data: [34, 65, 34, 65, 34, 34, 34, 56, 23, 67, 23, 45],
-                color: '#6366f1'
-            },
-            {
-                name: "Revenue",
-                data: [34, 32, 45, 32, 34, 34, 43, 56, 65, 67, 45, 78],
-                color: '#ec4899'
-            }
-        ],
+        series: [{
+            name: "Revenue",
+            data: [45000, 52000, 48000, 61000, 58000, 72000, 69000, 81000, 78000, 85000, 92000, 98000],
+            color: '#10b981'
+        }],
         options: {
             chart: {
-                type: 'bar',
-                height: 350,
-                foreColor: '#d0d2d6',
+                type: 'area',
+                height: '100%',
                 background: 'transparent',
                 toolbar: { show: false },
-                fontFamily: 'Inter, sans-serif'
+                fontFamily: 'Inter, sans-serif',
+                zoom: { enabled: false }
             },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '55%',
-                    borderRadius: 8,
-                    distributed: false
-                },
+            stroke: {
+                curve: 'smooth',
+                width: 3,
+                colors: ['#10b981']
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.7,
+                    opacityTo: 0.1,
+                    stops: [0, 90, 100],
+                    colorStops: [
+                        {
+                            offset: 0,
+                            color: '#10b981',
+                            opacity: 0.4
+                        },
+                        {
+                            offset: 100,
+                            color: '#10b981',
+                            opacity: 0.1
+                        }
+                    ]
+                }
             },
             dataLabels: { enabled: false },
-            stroke: {
-                show: true,
-                width: 2,
-                colors: ['transparent']
-            },
             xaxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                axisBorder: { show: false },
-                axisTicks: { show: false },
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                axisBorder: { 
+                    show: true,
+                    color: '#e5e7eb'
+                },
+                axisTicks: { 
+                    show: true,
+                    color: '#e5e7eb'
+                },
                 labels: {
                     style: {
-                        colors: '#d0d2d6',
-                        fontSize: '12px'
+                        colors: '#6b7280',
+                        fontSize: '11px',
+                        fontFamily: 'Inter, sans-serif'
                     }
-                }
+                },
+                tooltip: { enabled: false }
             },
             yaxis: {
                 labels: {
                     style: {
-                        colors: '#d0d2d6',
-                        fontSize: '12px'
+                        colors: '#6b7280',
+                        fontSize: '11px',
+                        fontFamily: 'Inter, sans-serif'
                     },
                     formatter: (val) => `₦${formatNumber(val)}`
-                }
-            },
-            fill: {
-                opacity: 1,
-                type: 'gradient',
-                gradient: {
-                    shade: 'dark',
-                    type: "vertical",
-                    shadeIntensity: 0.5,
-                    gradientToColors: ['#6366f1', '#ec4899'],
-                    inverseColors: false,
-                    opacityFrom: 0.8,
-                    opacityTo: 0.2,
-                    stops: [0, 100]
-                }
+                },
+                min: 0,
+                max: 100000
             },
             grid: {
-                borderColor: '#374151',
-                strokeDashArray: 5,
+                borderColor: '#f3f4f6',
+                strokeDashArray: 4,
                 xaxis: { lines: { show: false } },
-                yaxis: { lines: { show: true } }
-            },
-            legend: {
-                position: 'top',
-                horizontalAlign: 'right',
-                labels: { colors: '#d0d2d6' },
-                fontSize: '14px',
-                itemMargin: {
-                    horizontal: 10,
-                    vertical: 5
+                yaxis: { lines: { show: true } },
+                padding: {
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0
                 }
             },
             tooltip: {
-                theme: 'dark',
-                y: { formatter: (val) => `₦${formatNumber(val)}` },
+                theme: 'light',
                 style: {
                     fontSize: '12px',
                     fontFamily: 'Inter, sans-serif'
+                },
+                y: { 
+                    formatter: (val) => `₦${formatNumber(val)}`,
+                    title: {
+                        formatter: () => 'Revenue:'
+                    }
+                },
+                x: {
+                    formatter: (val) => `${val} 2024`
                 }
             },
-            responsive: [{
-                breakpoint: 640,
-                options: {
-                    chart: {
-                        height: 250,
-                        width: '100%'
-                    },
-                    legend: {
-                        position: 'bottom',
-                        horizontalAlign: 'center',
-                        fontSize: '12px'
-                    },
-                    xaxis: {
-                        labels: {
-                            style: {
-                                fontSize: '10px'
-                            }
-                        }
-                    },
-                    yaxis: {
-                        labels: {
-                            style: {
-                                fontSize: '10px'
-                            }
-                        }
-                    }
-                }
-            }]
+            markers: {
+                size: 4,
+                colors: ['#10b981'],
+                strokeColors: '#ffffff',
+                strokeWidth: 2,
+                hover: { size: 6 }
+            }
         }
     }
 
+    // Enhanced message data with read status
+    const enhancedMessages = recentMessage.map(msg => ({
+        ...msg,
+        isRead: Math.random() > 0.5,
+        priority: Math.random() > 0.7 ? 'high' : 'normal'
+    }));
+
     return (
-        <div className='px-2 sm:px-4 lg:px-6 pb-4 bg-gradient-to-br from-gray-900 to-slate-900 min-h-screen'>
-            {/* Profile Header */}
-            <div className='lg:pt-4 pt-3 pb-2'>
-                <div className='bg-gradient-to-r from-indigo-900/50 to-purple-900/50 rounded-xl sm:rounded-2xl p-4 shadow-xl border border-slate-700'>
-                    <div className='flex flex-col sm:flex-row items-center gap-4'>
-                        <div className='relative'>
-                            <div className='relative w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 border-indigo-500'>
-                                <img
-                                    className='w-full h-full object-cover'
-                                    src={userInfo.image || customer}
-                                    alt="Profile"
-                                />
-                                <div className='absolute bottom-0 right-0 w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-emerald-500 border-2 border-slate-900'></div>
+        <div className='min-h-screen bg-gray-50'>
+            {/* Mobile Header */}
+            <div className="bg-white border-b border-gray-200 sticky top-0 z-10 lg:hidden">
+                <div className='px-4 py-3'>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center shadow-sm">
+                                <img className="w-8 h-8 rounded" src={userInfo.image || customer} alt="Profile" />
+                            </div>
+                            <div>
+                                <h1 className='text-base font-semibold text-gray-900'>Dashboard</h1>
+                                <p className='text-xs text-gray-500'>Welcome back, {userInfo.name?.split(' ')[0]}</p>
                             </div>
                         </div>
-                        <div className='flex-1 text-center sm:text-left'>
-                            <h1 className='text-lg sm:text-xl lg:text-2xl font-bold text-white'>
-                                Welcome back, {userInfo.name}
-                            </h1>
-                            <p className='text-slate-400 text-xs sm:text-sm mt-1'>
-                                {userInfo.role === 'admin'
-                                    ? 'Administrator Dashboard'
-                                    : 'Seller Dashboard'
-                                }
-                            </p>
-                        </div>
-                        <div className='flex items-center gap-1 bg-indigo-600/20 px-3 py-1.5 rounded-full text-indigo-400 text-xs sm:text-sm'>
-                            <VerifiedTwoToneIcon className="text-indigo-400 text-sm sm:text-base" />
-                            <span className='font-medium'>
-                                {userInfo.role === 'admin' ? 'Admin' : 'Verified Seller'}
-                            </span>
+                        <div className="flex items-center space-x-2">
+                            <div className="bg-green-50 px-3 py-1.5 rounded-full">
+                                <VerifiedTwoToneIcon className="text-green-600 text-sm" />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:mb-6 mb-3">
-                {[
-                    {
-                        title: 'Total Income',
-                        value: `₦${availableAmount}`,
-                        icon: <AssuredWorkloadSharpIcon className="text-lg sm:text-xl" />,
-                        color: 'bg-gradient-to-br from-emerald-600 to-teal-500',
-                        trend: '+24%'
-                    },
-                    {
-                        title: 'All Products',
-                        value: totalProduct,
-                        icon: <CategorySharpIcon className="text-lg sm:text-xl" />,
-                        color: 'bg-gradient-to-br from-amber-600 to-orange-500',
-                        trend: '+12%'
-                    },
-                    {
-                        title: 'Total Orders',
-                        value: totalOrder,
-                        icon: <LocalMallSharpIcon className="text-lg sm:text-xl" />,
-                        color: 'bg-gradient-to-br from-orange-600 to-amber-500',
-                        trend: '+8%'
-                    },
-                    {
-                        title: 'Pending Orders',
-                        value: totalPendingOrder,
-                        icon: <PendingActionsSharpIcon className="text-lg sm:text-xl" />,
-                        color: 'bg-gradient-to-br from-indigo-600 to-purple-500',
-                        trend: '+3%'
-                    }
-                ].map((card, index) => (
-                    <div key={index} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 p-3 sm:p-4 rounded-xl border border-slate-700 hover:border-indigo-500 transition-all shadow-lg hover:shadow-indigo-500/20">
-                        <div className="flex items-center justify-between mb-2">
-                            <p className="text-xs sm:text-sm text-slate-400">{card.title}</p>
-                            <div className={`${card.color} w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shadow-md`}>
-                                {card.icon}
+            <div className='max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4'>
+                {/* Profile & Overview Section */}
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 lg:gap-6 mb-4 lg:mb-6">
+                    {/* Seller Profile Card */}
+                    <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm lg:col-span-1">
+                        <div className="flex flex-col items-center text-center mb-4">
+                            <div className="relative mb-3">
+                                <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 p-0.5 shadow-lg">
+                                    <img 
+                                        className="w-full h-full rounded-2xl object-cover" 
+                                        src={userInfo.image || customer} 
+                                        alt="Seller Profile" 
+                                    />
+                                </div>
+                                <div className="absolute -bottom-1 -right-1 w-5 h-5 lg:w-6 lg:h-6 rounded-full bg-green-500 border-2 border-white flex items-center justify-center">
+                                    <VerifiedTwoToneIcon className="text-white text-xs" />
+                                </div>
+                            </div>
+                            <h2 className="font-bold text-gray-900 text-base lg:text-lg truncate max-w-full px-2">{userInfo.name}</h2>
+                            <p className="text-gray-600 text-xs lg:text-sm mb-2">Verified Seller</p>
+                            <div className="flex items-center space-x-1 text-gray-500 text-xs">
+                                <FiMapPin className="text-xs" />
+                                <span>Lagos, Nigeria</span>
                             </div>
                         </div>
-                        <div className="flex items-end justify-between">
-                            <p className="text-base sm:text-lg md:text-xl font-bold text-white">
-                                {formatNumber(card.value)}
-                            </p>
-                            <span className={`text-xs ${card.trend.includes('+') ? 'text-emerald-400' : 'text-rose-400'} flex items-center gap-1`}>
-                                <span className={`inline-block w-0 h-0 border-x-3 border-x-transparent ${card.trend.includes('+') ? 'border-b-[5px] border-b-emerald-400' : 'border-t-[5px] border-t-rose-400'}`}></span>
-                                {card.trend}
-                            </span>
-                        </div>
-                    </div>
-                ))}
-            </div>
 
-            {/* Chart & Messages */}
-            <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6'>
-                {/* Chart Section */}
-                <div className='bg-gradient-to-br from-slate-800/50 to-slate-900/50 p-3 sm:p-4 md:p-6 rounded-xl border border-slate-700 shadow-xl'>
-                    <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2'>
-                        <h2 className='text-base sm:text-lg font-semibold text-white'>Monthly Performance</h2>
-                        <div className='flex gap-2'>
-                            <button className='text-xs px-2.5 py-1 rounded-md bg-slate-800/50 text-slate-300 hover:bg-indigo-500/10 hover:text-indigo-400 transition-all'>
-                                Monthly
-                            </button>
-                            <button className='text-xs px-2.5 py-1 rounded-md bg-slate-800/50 text-slate-300 hover:bg-indigo-500/10 hover:text-indigo-400 transition-all'>
-                                Quarterly
-                            </button>
-                        </div>
-                    </div>
-                    <Chart
-                        options={chartState.options}
-                        series={chartState.series}
-                        type='bar'
-                        height={300}
-                        width="100%"
-                    />
-                </div>
-
-                {/* Messages Section */}
-                <div className='bg-gradient-to-br from-slate-800/50 to-slate-900/50 p-3 sm:p-4 md:p-6 rounded-xl border border-slate-700 shadow-xl'>
-                    <div className='flex justify-between items-center mb-3'>
-                        <h2 className='text-base sm:text-lg font-semibold text-white'>Recent Messages</h2>
-                        <Link className='text-xs sm:text-sm text-indigo-400 hover:text-indigo-300 transition-colors'>View All</Link>
-                    </div>
-                    <div className='space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1'>
-                        {recentMessage.map((m, i) => (
-                            <div key={i} className='bg-slate-800/30 p-3 rounded-lg border border-slate-700 hover:border-indigo-500/50 transition-all'>
-                                <div className='flex items-start gap-3'>
-                                    <div className='relative flex-shrink-0'>
-                                        {m.senderId === userInfo._id ? (
-                                            <div className='w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center'>
-                                                <span className='text-xs sm:text-sm font-bold text-indigo-100'>
-                                                    {userInfo.name[0]}
-                                                </span>
-                                            </div>
-                                        ) : (
-                                            <div className='w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-amber-600 to-orange-500 flex items-center justify-center'>
-                                                <img className='w-4 h-4 sm:w-5 sm:h-5' src={customer} alt="Customer" />
-                                            </div>
-                                        )}
-                                        <div className='absolute -bottom-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-emerald-500 border-2 border-slate-900'></div>
+                        <div className="space-y-3 border-t border-gray-200 pt-4">
+                            <div className="flex justify-between items-center">
+                                <span className="text-gray-600 text-xs lg:text-sm">Seller Rating</span>
+                                <div className="flex items-center space-x-1">
+                                    <div className="flex">
+                                        {[1,2,3,4,5].map((star) => (
+                                            <div key={star} className="w-2.5 h-2.5 lg:w-3 lg:h-3 bg-yellow-400 rounded-sm mx-0.5"></div>
+                                        ))}
                                     </div>
-                                    <div className='flex-1 min-w-0'>
-                                        <div className='flex justify-between items-center mb-1'>
-                                            <span className='text-xs sm:text-sm font-medium text-white'>{m.senderName}</span>
-                                            <span className='text-xs text-slate-500'>
-                                                {moment(m.createdAt).startOf('hour').fromNow()}
-                                            </span>
+                                    <span className="text-gray-900 font-semibold text-xs lg:text-sm">4.8</span>
+                                </div>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-gray-600 text-xs lg:text-sm">Response Time</span>
+                                <span className="text-gray-900 font-semibold text-xs lg:text-sm">2h</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-gray-600 text-xs lg:text-sm">Completed Orders</span>
+                                <span className="text-gray-900 font-semibold text-xs lg:text-sm">{formatNumber(totalOrder - totalPendingOrder)}</span>
+                            </div>
+                        </div>
+
+                        <button className="w-full mt-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 rounded-lg text-xs lg:text-sm transition-colors">
+                            View Full Profile
+                        </button>
+                    </div>
+
+                    {/* Quick Stats */}
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-3 lg:col-span-3">
+                        <div className="bg-white rounded-xl p-3 lg:p-4 border border-gray-200 shadow-sm">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="p-1.5 lg:p-2 bg-green-50 rounded-lg">
+                                    <FiDollarSign className="text-green-600 text-sm lg:text-base" />
+                                </div>
+                                <span className="text-xs text-green-600 bg-green-50 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-full font-medium flex items-center">
+                                    <FiTrendingUp className="mr-0.5 lg:mr-1 text-xs" />
+                                    +12%
+                                </span>
+                            </div>
+                            <p className="text-gray-500 text-xs lg:text-sm">Total Revenue</p>
+                            <p className="text-gray-900 font-bold text-lg lg:text-xl">₦{formatNumber(availableAmount)}</p>
+                            <p className="text-gray-400 text-xs mt-0.5 lg:mt-1">Available for withdrawal</p>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-3 lg:p-4 border border-gray-200 shadow-sm">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="p-1.5 lg:p-2 bg-blue-50 rounded-lg">
+                                    <FiPackage className="text-blue-600 text-sm lg:text-base" />
+                                </div>
+                                <span className="text-xs text-blue-600 bg-blue-50 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-full font-medium">+8%</span>
+                            </div>
+                            <p className="text-gray-500 text-xs lg:text-sm">Active Products</p>
+                            <p className="text-gray-900 font-bold text-lg lg:text-xl">{formatNumber(totalProduct)}</p>
+                            <p className="text-gray-400 text-xs mt-0.5 lg:mt-1">Listed items</p>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-3 lg:p-4 border border-gray-200 shadow-sm">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="p-1.5 lg:p-2 bg-purple-50 rounded-lg">
+                                    <FiShoppingCart className="text-purple-600 text-sm lg:text-base" />
+                                </div>
+                                <span className="text-xs text-purple-600 bg-purple-50 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-full font-medium">+5%</span>
+                            </div>
+                            <p className="text-gray-500 text-xs lg:text-sm">Total Orders</p>
+                            <p className="text-gray-900 font-bold text-lg lg:text-xl">{formatNumber(totalOrder)}</p>
+                            <p className="text-gray-400 text-xs mt-0.5 lg:mt-1">All time orders</p>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-3 lg:p-4 border border-gray-200 shadow-sm">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="p-1.5 lg:p-2 bg-orange-50 rounded-lg">
+                                    <FiTrendingUp className="text-orange-600 text-sm lg:text-base" />
+                                </div>
+                                <span className="text-xs text-orange-600 bg-orange-50 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-full font-medium">+3%</span>
+                            </div>
+                            <p className="text-gray-500 text-xs lg:text-sm">Pending Orders</p>
+                            <p className="text-gray-900 font-bold text-lg lg:text-xl">{formatNumber(totalPendingOrder)}</p>
+                            <p className="text-gray-400 text-xs mt-0.5 lg:mt-1">Awaiting processing</p>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-3 lg:p-4 border border-gray-200 shadow-sm">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="p-1.5 lg:p-2 bg-cyan-50 rounded-lg">
+                                    <FiMessageSquare className="text-cyan-600 text-sm lg:text-base" />
+                                </div>
+                                <span className="text-xs text-cyan-600 bg-cyan-50 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-full font-medium">New</span>
+                            </div>
+                            <p className="text-gray-500 text-xs lg:text-sm">Unread Messages</p>
+                            <p className="text-gray-900 font-bold text-lg lg:text-xl">{enhancedMessages.filter(m => !m.isRead).length}</p>
+                            <p className="text-gray-400 text-xs mt-0.5 lg:mt-1">Require attention</p>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-3 lg:p-4 border border-gray-200 shadow-sm">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="p-1.5 lg:p-2 bg-red-50 rounded-lg">
+                                    <FiUsers className="text-red-600 text-sm lg:text-base" />
+                                </div>
+                                <span className="text-xs text-red-600 bg-red-50 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-full font-medium">98%</span>
+                            </div>
+                            <p className="text-gray-500 text-xs lg:text-sm">Satisfaction Rate</p>
+                            <p className="text-gray-900 font-bold text-lg lg:text-xl">98%</p>
+                            <p className="text-gray-400 text-xs mt-0.5 lg:mt-1">Customer feedback</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Main Content Grid */}
+                <div className='grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-6 mb-4 lg:mb-6'>
+                    {/* Revenue Chart */}
+                    <div className='bg-white rounded-xl p-4 lg:p-6 border border-gray-200 shadow-sm xl:col-span-2'>
+                        <div className='flex flex-col sm:flex-row sm:items-center justify-between mb-4 lg:mb-6 gap-3'>
+                            <div>
+                                <h2 className='text-base lg:text-xl font-bold text-gray-900'>Revenue Analytics</h2>
+                                <p className='text-gray-500 text-xs lg:text-sm'>Monthly revenue performance trends</p>
+                            </div>
+                            <div className='flex items-center space-x-2'>
+                                <div className='flex space-x-1 bg-gray-100 p-1 rounded-lg'>
+                                    <button className='text-xs px-2 lg:px-3 py-1 lg:py-1.5 rounded-md bg-white text-gray-900 shadow-sm font-medium'>Monthly</button>
+                                    <button className='text-xs px-2 lg:px-3 py-1 lg:py-1.5 rounded-md text-gray-600 font-medium'>Quarterly</button>
+                                    <button className='text-xs px-2 lg:px-3 py-1 lg:py-1.5 rounded-md text-gray-600 font-medium'>Yearly</button>
+                                </div>
+                                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                    <BsThreeDotsVertical className="text-gray-500 text-sm" />
+                                </button>
+                            </div>
+                        </div>
+                        <div className="h-[200px] lg:h-[280px]">
+                            <Chart
+                                options={chartState.options}
+                                series={chartState.series}
+                                type='area'
+                                height="100%"
+                                width="100%"
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mt-4 lg:mt-6 pt-4 lg:pt-6 border-t border-gray-200">
+                            <div className="text-center">
+                                <p className="text-gray-500 text-xs lg:text-sm font-medium">This Month</p>
+                                <p className="text-gray-900 font-bold text-sm lg:text-lg">₦98K</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-gray-500 text-xs lg:text-sm font-medium">Growth Rate</p>
+                                <p className="text-green-600 font-bold text-sm lg:text-lg flex items-center justify-center">
+                                    <FiTrendingUp className="mr-1 text-xs" />
+                                    +18.2%
+                                </p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-gray-500 text-xs lg:text-sm font-medium">Avg. Order</p>
+                                <p className="text-gray-900 font-bold text-sm lg:text-lg">₦12.4K</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-gray-500 text-xs lg:text-sm font-medium">Target</p>
+                                <p className="text-gray-900 font-bold text-sm lg:text-lg">₦1.2M</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Enhanced Messages Section */}
+                    <div className='bg-white rounded-xl border border-gray-200 shadow-sm'>
+                        <div className='p-4 lg:p-6 border-b border-gray-200'>
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div>
+                                    <h2 className='font-bold text-gray-900 text-base lg:text-lg flex items-center'>
+                                        <FiMessageSquare className="mr-2 text-gray-700 text-sm lg:text-base" />
+                                        Customer Messages
+                                    </h2>
+                                    <p className='text-gray-500 text-xs lg:text-sm mt-1'>Recent customer inquiries</p>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                                        {enhancedMessages.filter(m => !m.isRead).length} new
+                                    </span>
+                                    <Link className='text-green-600 hover:text-green-700 text-xs lg:text-sm font-medium flex items-center space-x-1'>
+                                        <span>View All</span>
+                                        <FiArrowUpRight className="text-xs" />
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='p-2 max-h-[300px] lg:max-h-[400px] overflow-y-auto'>
+                            {enhancedMessages.slice(0, 5).map((m, i) => (
+                                <div key={i} className={`p-2 lg:p-3 rounded-lg transition-all mb-2 last:mb-0 group hover:shadow-sm ${
+                                    !m.isRead ? 'bg-green-50 border border-green-200' : 'hover:bg-gray-50'
+                                }`}>
+                                    <div className='flex items-start space-x-2 lg:space-x-3'>
+                                        <div className='relative flex-shrink-0'>
+                                            <div className={`w-8 h-8 lg:w-10 lg:h-10 rounded-lg lg:rounded-xl flex items-center justify-center shadow-sm ${
+                                                m.priority === 'high' ? 'bg-red-500' : 'bg-gradient-to-r from-green-500 to-emerald-600'
+                                            }`}>
+                                                <span className='text-white text-xs lg:text-sm font-bold'>{m.senderName[0]}</span>
+                                            </div>
+                                            {!m.isRead && (
+                                                <div className='absolute -top-1 -right-1 w-2 h-2 lg:w-3 lg:h-3 rounded-full bg-green-500 border-2 border-white'></div>
+                                            )}
                                         </div>
-                                        <p className='text-xs sm:text-sm text-slate-400 bg-slate-800/50 p-2 rounded-md'>
-                                            {m.message.length > 60 ? m.message.substring(0, 60) + '...' : m.message}
-                                        </p>
+                                        <div className='flex-1 min-w-0'>
+                                            <div className='flex flex-col sm:flex-row sm:items-center justify-between mb-1 gap-1'>
+                                                <div className="flex items-center space-x-2">
+                                                    <span className='text-sm font-semibold text-gray-900 truncate'>{m.senderName}</span>
+                                                    {m.priority === 'high' && (
+                                                        <span className='bg-red-100 text-red-800 text-xs px-1.5 py-0.5 rounded-full font-medium'>Urgent</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex items-center space-x-1">
+                                                    <span className='text-xs text-gray-500'>
+                                                        {moment(m.createdAt).fromNow()}
+                                                    </span>
+                                                    {m.isRead ? (
+                                                        <BsCheckCircle className="text-green-500 text-xs lg:text-sm" />
+                                                    ) : (
+                                                        <BsClock className="text-orange-500 text-xs lg:text-sm" />
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <p className='text-gray-600 text-xs lg:text-sm line-clamp-2 mb-2'>
+                                                {m.message}
+                                            </p>
+                                            <div className="flex items-center justify-between">
+                                                <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                                                    m.senderId === userInfo._id 
+                                                        ? 'bg-blue-100 text-blue-800' 
+                                                        : 'bg-gray-100 text-gray-800'
+                                                }`}>
+                                                    {m.senderId === userInfo._id ? 'You' : 'Customer'}
+                                                </span>
+                                                <button className="text-green-600 hover:text-green-700 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    Reply
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                        {recentMessage.length === 0 && (
-                            <div className='text-center py-6'>
-                                <div className='inline-block p-3 rounded-full bg-slate-800/50 mb-2'>
-                                    <div className='w-10 h-10 rounded-full bg-gradient-to-r from-indigo-700/30 to-purple-700/30 flex items-center justify-center'>
-                                        <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-                                        </svg>
-                                    </div>
+                            ))}
+                            {enhancedMessages.length === 0 && (
+                                <div className='text-center py-6 lg:py-8'>
+                                    <FiMessageSquare className="w-10 h-10 lg:w-12 lg:h-12 text-gray-300 mx-auto mb-2 lg:mb-3" />
+                                    <p className='text-gray-500 text-sm font-medium'>No messages yet</p>
+                                    <p className='text-gray-400 text-xs mt-1'>Customer messages will appear here</p>
                                 </div>
-                                <p className='text-slate-400 text-sm'>No messages yet</p>
-                            </div>
-                        )}
+                            )}
+                        </div>
+                        <div className="p-3 lg:p-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+                            <button className="w-full bg-white border border-gray-300 hover:border-green-500 text-gray-700 hover:text-green-700 font-medium py-2 lg:py-2.5 rounded-lg text-xs lg:text-sm transition-all flex items-center justify-center space-x-2">
+                                <FiMail className="text-xs lg:text-sm" />
+                                <span>Compose New Message</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Recent Orders */}
-            <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-xl border border-slate-700 shadow-xl overflow-hidden">
-                <div className="p-3 sm:p-4 md:p-6 border-b border-slate-700 flex justify-between items-center">
-                    <h2 className="text-base sm:text-lg font-semibold text-white">Recent Orders</h2>
-                    <Link
-                        to="/seller/dashboard/orders"
-                        className="text-xs sm:text-sm text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1"
-                    >
-                        View All
-                        <FiArrowUpRight className="text-xs" />
-                    </Link>
-                </div>
+                {/* Recent Orders */}
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-16 lg:mb-0">
+                    <div className="p-4 lg:p-6 border-b border-gray-200">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <h2 className="font-bold text-gray-900 text-base lg:text-lg flex items-center">
+                                    <FiShoppingCart className="mr-2 text-gray-700 text-sm lg:text-base" />
+                                    Recent Orders
+                                </h2>
+                                <p className="text-gray-500 text-xs lg:text-sm mt-1">Latest customer orders and status</p>
+                            </div>
+                            <Link
+                                to="/seller/dashboard/orders"
+                                className="text-green-600 hover:text-green-700 text-xs lg:text-sm font-medium flex items-center space-x-2 bg-green-50 px-3 lg:px-4 py-2 rounded-lg border border-green-200 transition-colors self-start sm:self-auto"
+                            >
+                                <span>View All Orders</span>
+                                <FiArrowUpRight className="text-xs lg:text-sm" />
+                            </Link>
+                        </div>
+                    </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full min-w-[500px]">
-                        <thead className="bg-slate-800/30">
-                            <tr>
-                                <th className="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-indigo-400">Order ID</th>
-                                <th className="px-3 py-2 sm:px-4 sm:py-3 text-right text-xs font-medium text-indigo-400">Amount</th>
-                                <th className="px-3 py-2 sm:px-4 sm:py-3 text-center text-xs font-medium text-indigo-400 hidden xs:table-cell">Payment</th>
-                                <th className="px-3 py-2 sm:px-4 sm:py-3 text-center text-xs font-medium text-indigo-400">Status</th>
-                                <th className="px-3 py-2 sm:px-4 sm:py-3 text-right text-xs font-medium text-indigo-400">Actions</th>
-                            </tr>
-                        </thead>
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-[600px]">
+                            <thead className="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th className="text-left py-3 px-3 lg:px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Order ID</th>
+                                    <th className="text-right py-3 px-3 lg:px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Amount</th>
+                                    <th className="text-center py-3 px-3 lg:px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Payment</th>
+                                    <th className="text-center py-3 px-3 lg:px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th className="text-right py-3 px-3 lg:px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
+                                </tr>
+                            </thead>
 
-                        <tbody className="divide-y divide-slate-700">
-                            {recentOrders.length > 0 ? (
-                                recentOrders.map((d, i) => (
-                                    <tr key={i} className="hover:bg-slate-800/10 transition-colors">
-                                        <td className="px-3 py-2 sm:px-4 sm:py-3">
+                            <tbody className="divide-y divide-gray-200">
+                                {recentOrders.slice(0, 8).map((d, i) => (
+                                    <tr key={i} className="hover:bg-gray-50 transition-colors group">
+                                        <td className="py-3 px-3 lg:px-6">
                                             <div className="flex flex-col">
-                                                <span className="text-xs sm:text-sm font-medium text-white">
-                                                    #{d._id.substring(d._id.length - 6)}
+                                                <span className="text-xs lg:text-sm font-semibold text-gray-900">
+                                                    #{d._id.substring(d._id.length - 6).toUpperCase()}
                                                 </span>
-                                                <span className="text-xs text-slate-500 mt-0.5">
-                                                    {new Date(d.createdAt).toLocaleDateString()}
+                                                <span className="text-xs text-gray-500 flex items-center mt-0.5">
+                                                    <FiCalendar className="mr-1 text-xs" />
+                                                    {moment(d.createdAt).format('MMM D, YYYY')}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm text-slate-300 text-right font-medium">
-                                            ${formatNumber(d.price)}
+                                        <td className="py-3 px-3 lg:px-6 text-right">
+                                            <span className="text-xs lg:text-sm font-semibold text-gray-900">₦{formatNumber(d.price)}</span>
                                         </td>
-                                        <td className="px-3 py-2 sm:px-4 sm:py-3 hidden xs:table-cell">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${d.payment_status === 'paid'
-                                                ? 'bg-emerald-500/20 text-emerald-400'
-                                                : 'bg-amber-500/20 text-amber-400'
+                                        <td className="py-3 px-3 lg:px-6 hidden sm:table-cell">
+                                            <div className="flex justify-center">
+                                                <span className={`inline-flex items-center px-2 lg:px-3 py-1 rounded-full text-xs font-medium ${
+                                                    d.payment_status === 'paid' 
+                                                        ? 'bg-green-100 text-green-800 border border-green-200' 
+                                                        : 'bg-yellow-100 text-yellow-800 border border-yellow-200'
                                                 }`}>
-                                                {d.payment_status}
-                                            </span>
+                                                    <BsDot className={`text-base -ml-0.5 ${
+                                                        d.payment_status === 'paid' ? 'text-green-500' : 'text-yellow-500'
+                                                    }`} />
+                                                    {d.payment_status}
+                                                </span>
+                                            </div>
                                         </td>
-                                        <td className="px-3 py-2 sm:px-4 sm:py-3">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${d.delivery_status === 'delivered'
-                                                ? 'bg-indigo-500/20 text-indigo-400'
-                                                : 'bg-rose-500/20 text-rose-400'
+                                        <td className="py-3 px-3 lg:px-6">
+                                            <div className="flex justify-center">
+                                                <span className={`inline-flex items-center px-2 lg:px-3 py-1 rounded-full text-xs font-medium ${
+                                                    d.delivery_status === 'delivered' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                                                    d.delivery_status === 'shipped' ? 'bg-purple-100 text-purple-800 border border-purple-200' :
+                                                    d.delivery_status === 'processing' ? 'bg-cyan-100 text-cyan-800 border border-cyan-200' :
+                                                    'bg-orange-100 text-orange-800 border border-orange-200'
                                                 }`}>
-                                                {d.delivery_status}
-                                            </span>
+                                                    <BsDot className={`text-base -ml-0.5 ${
+                                                        d.delivery_status === 'delivered' ? 'text-blue-500' :
+                                                        d.delivery_status === 'shipped' ? 'text-purple-500' :
+                                                        d.delivery_status === 'processing' ? 'text-cyan-500' : 'text-orange-500'
+                                                    }`} />
+                                                    {d.delivery_status}
+                                                </span>
+                                            </div>
                                         </td>
-                                        <td className="px-3 py-2 sm:px-4 sm:py-3 text-right">
+                                        <td className="py-3 px-3 lg:px-6 text-right">
                                             <Link
                                                 to={`/seller/dashboard/order/details/${d._id}`}
-                                                className="inline-flex items-center text-white bg-indigo-600 hover:bg-indigo-500 rounded-md px-2.5 py-1 text-xs font-medium transition-colors shadow-md hover:shadow-indigo-500/30 whitespace-nowrap"
+                                                className="inline-flex items-center text-green-600 hover:text-green-700 text-xs lg:text-sm font-medium bg-green-50 hover:bg-green-100 px-2 lg:px-3 py-1.5 lg:py-2 rounded-lg transition-colors group-hover:bg-green-100"
                                             >
-                                                View
+                                                <FiEye className="mr-1 lg:mr-2 text-xs lg:text-sm" />
+                                                <span>View</span>
                                             </Link>
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="5" className='px-4 py-8 text-center'>
-                                        <div className='flex flex-col items-center justify-center text-gray-500'>
-                                            <LocalMallSharpIcon className='text-3xl mb-2 text-gray-600' />
-                                            <p className="text-sm">No recent orders</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                ))}
+                                {recentOrders.length === 0 && (
+                                    <tr>
+                                        <td colSpan="5" className='py-8 lg:py-12 text-center'>
+                                            <div className='flex flex-col items-center justify-center text-gray-500'>
+                                                <FiShoppingCart className='w-10 h-10 lg:w-12 lg:h-12 text-gray-300 mb-2 lg:mb-3' />
+                                                <p className="text-sm font-medium text-gray-600">No recent orders</p>
+                                                <p className="text-xs text-gray-400 mt-0.5 lg:mt-1">New orders will appear here automatically</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Quick Actions - Mobile Only */}
+                <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 shadow-lg z-20">
+                    <div className="grid grid-cols-4 gap-2">
+                        <Link className="flex flex-col items-center space-y-1 p-2 rounded-lg text-green-600 bg-green-50">
+                            <FiShoppingCart className="text-sm" />
+                            <span className="text-xs font-medium">Orders</span>
+                        </Link>
+                        <Link className="flex flex-col items-center space-y-1 p-2 rounded-lg text-gray-500 hover:text-gray-700">
+                            <FiPackage className="text-sm" />
+                            <span className="text-xs font-medium">Products</span>
+                        </Link>
+                        <Link className="flex flex-col items-center space-y-1 p-2 rounded-lg text-gray-500 hover:text-gray-700">
+                            <FiMessageSquare className="text-sm" />
+                            <span className="text-xs font-medium">Messages</span>
+                        </Link>
+                        <Link className="flex flex-col items-center space-y-1 p-2 rounded-lg text-gray-500 hover:text-gray-700">
+                            <FiUsers className="text-sm" />
+                            <span className="text-xs font-medium">Profile</span>
+                        </Link>
+                    </div>
                 </div>
             </div>
-
-            <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: #4b5563;
-                    border-radius: 10px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: #3b82f6;
-                }
-            `}</style>
         </div>
     )
 }

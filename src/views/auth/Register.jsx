@@ -12,14 +12,13 @@ import { messageClear, seller_register } from '../../store/Reducers/authReducer'
 const Register = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const { loader, errorMessage, successMessage } = useSelector(state => state.auth)
-    const [state, setSatate] = useState({
+    const { loader, errorMessage, successMessage, token } = useSelector(state => state.auth)
+    const [state, setState] = useState({
         name: '',
         email: "",
         password: ''
     })
     
-    // Password validation state
     const [passwordValidations, setPasswordValidations] = useState({
         length: false,
         uppercase: false,
@@ -30,12 +29,11 @@ const Register = () => {
     
     const inputHandle = (e) => {
         const { name, value } = e.target
-        setSatate({
+        setState({
             ...state,
             [name]: value
         })
         
-        // Validate password in real-time
         if (name === 'password') {
             validatePassword(value)
         }
@@ -55,32 +53,60 @@ const Register = () => {
         return Object.values(passwordValidations).every(Boolean)
     }
     
-    const submit = (e) => {
+    const submit = async (e) => {
         e.preventDefault()
         
-        if (!isPasswordValid()) {
-            toast.error('Please create a stronger password')
-            return
+        if (!state.name || !state.email || !state.password) {
+            toast.error('Please fill in all fields');
+            return;
         }
         
-        dispatch(seller_register(state))
+        if (!isPasswordValid()) {
+            toast.error('Please create a stronger password');
+            return;
+        }
+        
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(state.email)) {
+            toast.error('Please enter a valid email address');
+            return;
+        }
+        
+        try {
+            await dispatch(seller_register(state)).unwrap();
+        } catch (error) {
+            // Error is handled in the reducer
+            console.error('Registration failed:', error);
+        }
     }
     
     useEffect(() => {
         if (successMessage) {
-            toast.success(successMessage)
-            dispatch(messageClear())
-            navigate('/')
+            toast.success(successMessage);
+            dispatch(messageClear());
+            
+            // Redirect after successful registration
+            setTimeout(() => {
+                if (token) {
+                    navigate('/seller/dashboard');
+                } else {
+                    navigate('/login');
+                }
+            }, 2000);
         }
+    }, [successMessage, token, navigate, dispatch])
+    
+    useEffect(() => {
         if (errorMessage) {
-            toast.error(errorMessage)
-            dispatch(messageClear())
+            toast.error(errorMessage);
+            dispatch(messageClear());
         }
-    }, [successMessage, errorMessage])
+    }, [errorMessage, dispatch])
     
     return (
         <div className='min-w-screen min-h-screen bg-black flex justify-center items-center relative overflow-hidden'>
-            {/* Floating "ridan" background element */}
+            {/* Your existing JSX remains the same */}
             <div className='absolute inset-0 flex justify-center items-center pointer-events-none'>
                 <div className='absolute animate-float opacity-[0.03]'>
                     <span className='text-[300px] md:text-[400px] font-black text-orange-500'>ridan</span>
@@ -94,16 +120,17 @@ const Register = () => {
                     
                     <form onSubmit={submit}>
                         <div className='flex flex-col w-full gap-2 mb-4'>
-                            <label htmlFor="name" className='text-gray-300'>Name</label>
+                            <label htmlFor="name" className='text-gray-300'>Full Name</label>
                             <input 
                                 onChange={inputHandle} 
                                 value={state.name} 
-                                className='px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-white focus:ring-0 text-white' 
+                                className='px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-orange-500 focus:ring-0 text-white' 
                                 type="text" 
                                 name='name' 
-                                placeholder='Enter your name' 
+                                placeholder='Enter your full name' 
                                 id='name' 
                                 required 
+                                minLength="2"
                             />
                         </div>
                         
@@ -112,7 +139,7 @@ const Register = () => {
                             <input 
                                 onChange={inputHandle} 
                                 value={state.email} 
-                                className='px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-white focus:ring-0 text-white' 
+                                className='px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-orange-500 focus:ring-0 text-white' 
                                 type="email" 
                                 name='email' 
                                 placeholder='Enter your email' 
@@ -126,16 +153,16 @@ const Register = () => {
                             <input 
                                 onChange={inputHandle} 
                                 value={state.password} 
-                                className='px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-white focus:ring-0 text-white' 
+                                className='px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-orange-500 focus:ring-0 text-white' 
                                 type="password" 
                                 name='password' 
                                 placeholder='Create password' 
                                 id='password' 
                                 required 
+                                minLength="8"
                             />
                         </div>
                         
-                        {/* Clean password validation indicators */}
                         {state.password && (
                             <div className='mb-5 text-xs text-gray-400 space-y-1'>
                                 <div className='flex items-center'>
@@ -163,7 +190,7 @@ const Register = () => {
                         
                         <div className='flex items-center w-full gap-3 mb-5'>
                             <input 
-                                className='w-4 h-4 text-gray-800 bg-gray-700 border-gray-600 rounded focus:ring-gray-500' 
+                                className='w-4 h-4 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500' 
                                 type="checkbox" 
                                 name='checkbox' 
                                 id='checkbox' 
@@ -176,18 +203,19 @@ const Register = () => {
                         
                         <button 
                             disabled={loader || !isPasswordValid()} 
-                            className={`w-full bg-white text-black font-medium rounded-lg px-7 py-3 mb-4 hover:bg-gray-200 transition-colors ${!isPasswordValid() ? 'opacity-60' : ''}`}
+                            className={`w-full ${!isPasswordValid() || loader ? 'bg-gray-600 cursor-not-allowed' : 'bg-orange-500 hover:bg-orange-600'} text-white font-medium rounded-lg px-7 py-3 mb-4 transition-colors`}
                         >
-                            {loader ? <PropagateLoader color='#000' cssOverride={overrideStyle} /> : 'SIGN UP'}
+                            {loader ? <PropagateLoader color='#fff' size={10} /> : 'SIGN UP'}
                         </button>
                         
                         <div className='text-center mb-5 text-gray-400 text-sm'>
                             Already have an account? 
-                            <Link to='/login' className='text-white ml-1 hover:underline'>
+                            <Link to='/login' className='text-orange-500 ml-1 hover:underline'>
                                 Sign in
                             </Link>
                         </div>
                         
+                        {/* Social login buttons */}
                         <div className='flex items-center mb-5'>
                             <div className='flex-grow border-t border-gray-700'></div>
                             <span className='mx-4 text-gray-500 text-xs'>OR CONTINUE WITH</span>
@@ -214,7 +242,6 @@ const Register = () => {
                 </div>
             </div>
             
-            {/* Animation style for floating text */}
             <style jsx>{`
                 @keyframes float {
                     0% { transform: translate(0, 0) rotate(0deg); }
@@ -230,4 +257,4 @@ const Register = () => {
     )
 }
 
-export default Register
+export default Register;
